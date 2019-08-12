@@ -1,0 +1,13 @@
+platform :ios, '11.0'
+use_frameworks!
+
+target 'TiltUp_Example' do
+  pod 'TiltUp', :path => '../'
+  pod 'SwiftLint'
+
+  target 'TiltUp_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

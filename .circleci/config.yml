@@ -1,0 +1,48 @@
+version: 2
+codecov:
+  token: 15029db0-22fe-4e7e-a30f-7c2996190dbe
+jobs:
+  build-and-test:
+    macos:
+      xcode: 10.2.1
+    shell: /bin/bash --login -o pipefail
+    steps:
+      - checkout
+      - run: gem install bundler
+      - run: bundle install
+      - run: 
+          name: Add and Update Private Clutter CocoaPods Specs
+          command: Scripts/add_and_update_clutter_specs.sh
+      - run:
+          name: Fastlane
+          command: bundle exec fastlane ios test
+      - store_test_results:
+          path: test_output/report.xml
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: scan-test-results
+      - store_artifacts:
+          path: ~/Library/Logs/scan
+          destination: scan-logs
+  danger:
+    macos:
+      xcode: 10.2.1
+    working_directory: /Users/distiller/project
+    environment:
+      DANGER_GITHUB_API_TOKEN: 2b388130450c1a4247582e419e761bfd301f984d
+    shell: /bin/bash --login -o pipefail
+    steps:
+      - checkout
+      - run: brew tap danger/tap
+      - run: brew install danger/tap/danger-swift
+      - run: brew install swiftlint
+      - run:
+          name: Danger
+          command: danger-swift ci
+
+workflows:
+  version: 2
+  build-test-adhoc:
+    jobs:
+      - build-and-test
+      - danger
