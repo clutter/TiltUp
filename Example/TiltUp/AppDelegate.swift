@@ -8,13 +8,19 @@
 
 import UIKit
 
+import TiltUp
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow?
+    private var appCoordinator: AppCoordinator!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        appCoordinator = AppCoordinator.initialize(window: window)
+        let coordinator = BootstrapCoordinator(appCoordinator: appCoordinator)
+        appCoordinator.start(coordinator: coordinator)
+
         return true
     }
 
