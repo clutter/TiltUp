@@ -8,14 +8,14 @@
 
 import UIKit
 
-public protocol StoryboardViewController {
+public protocol StoryboardViewController: AnyObject {
     static func make() -> Self
 }
 
 public extension StoryboardViewController {
     static func make() -> Self {
         let name = String(describing: self).replacingOccurrences(of: "Controller", with: "")
-        let storyboard = UIStoryboard(name: name, bundle: nil)
+        let storyboard = UIStoryboard(name: name, bundle: Bundle(for: self))
 
         guard let controller = storyboard.instantiateInitialViewController() as? Self else {
             fatalError("StoryboardViewController: unable to instantiate '\(self)'")
