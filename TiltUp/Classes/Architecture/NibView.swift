@@ -13,7 +13,7 @@ public protocol NibView: AnyObject {
     static func make() -> Self
 }
 
-extension NibView {
+public extension NibView {
     static var nib: UINib {
         return UINib(nibName: String(describing: self), bundle: Bundle(for: self))
     }
