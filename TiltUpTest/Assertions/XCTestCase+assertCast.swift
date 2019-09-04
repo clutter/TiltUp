@@ -1,24 +1,28 @@
 //
 //  XCTestCase+assertCast.swift
-//  TiltUpTests
+//  TiltUpTest
 //
-//  Created by Jeremy Grenier on 8/14/19.
+//  Created by Erik Strottmann on 3/14/19.
 //  Copyright © 2019 Clutter. All rights reserved.
 //
 
 import XCTest
 
 extension XCTestCase {
-    func assertCast<S: Any, T: Any>(_ expression: @autoclosure () throws -> S, as type: @autoclosure () throws -> T.Type, message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) throws -> T {
+    func assertCast<S: Any, T: Any>(_ expression: @autoclosure () throws -> S,
+                                    as type: @autoclosure () throws -> T.Type,
+                                    message: @autoclosure () -> String = "",
+                                    file: StaticString = #file,
+                                    line: UInt = #line) throws -> T {
         let value: S?
         do {
             value = try expression()
         } catch {
             recordFailure(
-                withDescription: "assertCast(_:as:) failed: threw error \"\(error)\" - \(message())",
+                withDescription: #"assertCast(_:as:) failed: threw error "\#(error)" - \#(message())"#,
                 inFile: String(describing: file),
                 atLine: Int(line),
-                expected: true
+                expected: false
             )
             throw error
         }
@@ -35,7 +39,7 @@ extension XCTestCase {
 
         guard let cast = unwrapped as? T else {
             recordFailure(
-                withDescription: "assertCast(_:as:) failed: (\"\(unwrapped)\") is not of type (\"\(T.self)\") - \(message())",
+                withDescription: #"assertCast(_:as:) failed: ("\#(unwrapped)") is not of type ("\#(T.self)") - \#(message())"#,
                 inFile: String(describing: file),
                 atLine: Int(line),
                 expected: true
