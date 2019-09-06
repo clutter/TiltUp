@@ -8,7 +8,7 @@
 
 import XCTest
 
-extension XCTestCase {
+public extension XCTestCase {
     func testUI(setup: @escaping () -> Void, assertions: @escaping () -> Void) {
         let mainThreadExpectation = expectation(description: "Wait for main thread code to run")
 

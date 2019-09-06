@@ -8,7 +8,7 @@
 
 import XCTest
 
-extension XCTestCase {
+public extension XCTestCase {
     func assertType<S: Any, T: Any>(of expression: @autoclosure () throws -> S,
                                     is type: @autoclosure () throws -> T.Type,
                                     message: @autoclosure () -> String = "",
