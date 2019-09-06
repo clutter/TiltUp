@@ -20,7 +20,7 @@ TiltUp is available via Clutter's private CocoaPods repo. To include it in your 
     pod 'TiltUp'
     ```
 
-    a. Optionally add the TiltUpTest pod to your test target:
+    1. Optionally add the TiltUpTest pod to your test target:
 
         ```ruby
         pod 'TiltUpTest'
