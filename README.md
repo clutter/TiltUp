@@ -42,7 +42,7 @@ TODO: Document Architecture components
 
 ## TiltUpTest Usage
 
-## Assertions
+### Assertions
 
 #### <a name="assertCast"></a>assertCast(\_:as:)
 
@@ -219,7 +219,7 @@ func testRefreshing() {
 }
 ```
 
-## Errors
+### Errors
 
 #### UnexpectedNilError
 
