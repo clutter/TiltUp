@@ -28,6 +28,8 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '11.0'
   s.swift_versions        = ['5.0']
 
+  s.pod_target_xcconfig = { 'ENABLE_BITCODE' => 'NO' }
+
   s.frameworks = 'XCTest'
 
   s.source       = { :git => "git@github.com:clutter/TiltUp.git", :tag => "#{s.version}" }
