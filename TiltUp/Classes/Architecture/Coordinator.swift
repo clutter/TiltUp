@@ -66,9 +66,9 @@ public extension Router {
 
 public extension Router {
     // MARK: Presenting modals
-    func presentModal(_ viewController: UIViewController, retaining coordinator: Coordinating, animated: Bool = true, dismissHandler: (() -> Void)? = nil) {
+    func presentModal(_ viewController: UIViewController, retaining coordinator: Coordinating, animated: Bool = true, presentationStyle: UIModalPresentationStyle = .fullScreen, dismissHandler: (() -> Void)? = nil) {
         coordinator.appCoordinator.pushCoordinator(coordinator)
-        presentModal(viewController, animated: animated) { [weak coordinator] in
+        presentModal(viewController, animated: animated, presentationStyle: presentationStyle) { [weak coordinator] in
             dismissHandler?()
             if let coordinator = coordinator {
                 coordinator.appCoordinator.popCoordinator(coordinator)
@@ -76,9 +76,9 @@ public extension Router {
         }
     }
 
-    func presentModal(_ router: Router, retaining coordinator: Coordinating, animated: Bool = true, dismissHandler: (() -> Void)? = nil) {
+    func presentModal(_ router: Router, retaining coordinator: Coordinating, animated: Bool = true, presentationStyle: UIModalPresentationStyle = .fullScreen, dismissHandler: (() -> Void)? = nil) {
         coordinator.appCoordinator.pushCoordinator(coordinator)
-        presentModal(router, animated: animated) { [weak coordinator] in
+        presentModal(router, animated: animated, presentationStyle: presentationStyle) { [weak coordinator] in
             dismissHandler?()
             if let coordinator = coordinator {
                 coordinator.appCoordinator.popCoordinator(coordinator)
