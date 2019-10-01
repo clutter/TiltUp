@@ -31,7 +31,7 @@ public class Observable<Observed> {
      - returns: A `Disposable` that must be retained until you want to stop observing. Release the `Disposable` to
      remove the observer.
      */
-    func addObserver(observingCurrentValue: Bool, on queue: DispatchQueue = .main, observer: @escaping Observer) -> Disposable {
+    public func addObserver(observingCurrentValue: Bool, on queue: DispatchQueue = .main, observer: @escaping Observer) -> Disposable {
         let uuid = UUID()
         observers[uuid] = (queue, observer)
 
@@ -86,7 +86,9 @@ public class ObserverList<Observed> {
 }
 
 public class ObserverNotifier<Observed> {
-    let observerList = ObserverList<Observed>()
+    public let observerList = ObserverList<Observed>()
+
+    public init() {}
 
     /**
      Calls each observer in the receiver’s `observerList` with `observed` as an argument. Each observer is called on the
@@ -95,7 +97,7 @@ public class ObserverNotifier<Observed> {
      - parameter observed: The observed value of which to notify each observer.
      */
     public func notifyObservers(of observed: Observed) {
-        self.observerList.observers.values.forEach { queue, observer in
+        observerList.observers.values.forEach { queue, observer in
             queue.async {
                 observer(observed)
             }
