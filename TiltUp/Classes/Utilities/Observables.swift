@@ -6,7 +6,7 @@
 //
 
 @propertyWrapper
-public class Observable<Observed> {
+public final class Observable<Observed> {
     public typealias Observer = (_ oldValue: Observed, _ newValue: Observed) -> Void
     private var observers: [UUID: (DispatchQueue, Observer)] = [:]
 
@@ -63,7 +63,7 @@ public class Observable<Observed> {
     }
 }
 
-public class ObserverList<Observed> {
+public final class ObserverList<Observed> {
     public typealias Observer = (Observed) -> Void
     fileprivate var observers: [UUID: (DispatchQueue, Observer)] = [:]
 
@@ -85,7 +85,7 @@ public class ObserverList<Observed> {
     }
 }
 
-public class ObserverNotifier<Observed> {
+public final class ObserverNotifier<Observed> {
     public let observerList = ObserverList<Observed>()
 
     public init() {}
