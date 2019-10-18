@@ -7,6 +7,7 @@
 //
 
 import XCTest
+
 import TiltUp
 
 final class TestAppCoordinator: AppCoordinating {
