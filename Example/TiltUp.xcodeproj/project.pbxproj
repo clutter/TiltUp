@@ -19,6 +19,8 @@
 		0B25C6792304C2B300F88096 /* TestAppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B25C6732304C2B200F88096 /* TestAppCoordinator.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		BBD511DD2320206D00EB8673 /* UnexpectedNilErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD511DC2320206D00EB8673 /* UnexpectedNilErrorTests.swift */; };
+		BBD58F3723593DF500FDD6FE /* SingleSelectionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD58F3623593DF500FDD6FE /* SingleSelectionViewModelTests.swift */; };
+		BBD58F392359487700FDD6FE /* SingleSelectionViewModelInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD58F382359487700FDD6FE /* SingleSelectionViewModelInternalTests.swift */; };
 		D2AD536E23B5325850E8AD51 /* Pods_TiltUp_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 232A76C814583E4EC3E95A2D /* Pods_TiltUp_Tests.framework */; };
 		F8AE617228BD766A5EBD3BF9 /* Pods_TiltUp_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B894AE031CE2AA7B0F3A355 /* Pods_TiltUp_Example.framework */; };
 /* End PBXBuildFile section */
@@ -57,6 +59,8 @@
 		69E167773BC93AD45EE2331A /* Pods-TiltUp_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TiltUp_Tests.debug.xcconfig"; path = "Target Support Files/Pods-TiltUp_Tests/Pods-TiltUp_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		8DF9D5246472A46303CD5C66 /* Pods-TiltUp_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TiltUp_Example.release.xcconfig"; path = "Target Support Files/Pods-TiltUp_Example/Pods-TiltUp_Example.release.xcconfig"; sourceTree = "<group>"; };
 		BBD511DC2320206D00EB8673 /* UnexpectedNilErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnexpectedNilErrorTests.swift; sourceTree = "<group>"; };
+		BBD58F3623593DF500FDD6FE /* SingleSelectionViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleSelectionViewModelTests.swift; sourceTree = "<group>"; };
+		BBD58F382359487700FDD6FE /* SingleSelectionViewModelInternalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSelectionViewModelInternalTests.swift; sourceTree = "<group>"; };
 		C7D1B88FB3EE56F1DD79BACA /* TiltUp.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = TiltUp.podspec; path = ../TiltUp.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
@@ -182,6 +186,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				BBD58F3A23594A5300FDD6FE /* Screens */,
 				0B25C66F2304C2B200F88096 /* Architecture */,
 				BBD511DB2320205900EB8673 /* Errors */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
@@ -221,6 +226,23 @@
 				BBD511DC2320206D00EB8673 /* UnexpectedNilErrorTests.swift */,
 			);
 			path = Errors;
+			sourceTree = "<group>";
+		};
+		BBD58F3A23594A5300FDD6FE /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				BBD58F3B23594A5A00FDD6FE /* SingleSelection */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		BBD58F3B23594A5A00FDD6FE /* SingleSelection */ = {
+			isa = PBXGroup;
+			children = (
+				BBD58F382359487700FDD6FE /* SingleSelectionViewModelInternalTests.swift */,
+				BBD58F3623593DF500FDD6FE /* SingleSelectionViewModelTests.swift */,
+			);
+			path = SingleSelection;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -445,8 +467,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B25C6762304C2B300F88096 /* TestCoordinator.swift in Sources */,
+				BBD58F3723593DF500FDD6FE /* SingleSelectionViewModelTests.swift in Sources */,
 				BBD511DD2320206D00EB8673 /* UnexpectedNilErrorTests.swift in Sources */,
 				0B25C6792304C2B300F88096 /* TestAppCoordinator.swift in Sources */,
+				BBD58F392359487700FDD6FE /* SingleSelectionViewModelInternalTests.swift in Sources */,
 				0B25C6782304C2B300F88096 /* TestNavigationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
