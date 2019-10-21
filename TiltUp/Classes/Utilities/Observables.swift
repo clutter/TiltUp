@@ -63,6 +63,12 @@ public final class Observable<Observed> {
     }
 }
 
+extension Observable where Observed: ExpressibleByNilLiteral {
+    public convenience init() {
+        self.init(wrappedValue: nil)
+    }
+}
+
 public final class ObserverList<Observed> {
     public typealias Observer = (Observed) -> Void
     fileprivate var observers: [UUID: (DispatchQueue, Observer)] = [:]
