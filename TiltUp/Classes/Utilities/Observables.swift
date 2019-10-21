@@ -5,18 +5,20 @@
 //  Created by Michael Mattson on 9/23/19.
 //
 
-public class Observable<Observed> {
+@propertyWrapper
+public final class Observable<Observed> {
     public typealias Observer = (_ oldValue: Observed, _ newValue: Observed) -> Void
     private var observers: [UUID: (DispatchQueue, Observer)] = [:]
 
-    public var value: Observed {
+    public var wrappedValue: Observed {
         didSet {
-            notifyObservers(oldValue: oldValue, newValue: value)
+            notifyObservers(oldValue: oldValue, newValue: wrappedValue)
         }
     }
+    public var projectedValue: Observable<Observed> { self }
 
-    public init(value: Observed) {
-        self.value = value
+    public init(wrappedValue: Observed) {
+        self.wrappedValue = wrappedValue
     }
 
     /**
@@ -34,7 +36,7 @@ public class Observable<Observed> {
         observers[uuid] = (queue, observer)
 
         if observingCurrentValue {
-            let observedValue = value
+            let observedValue = wrappedValue
             queue.async {
                 observer(observedValue, observedValue)
             }
@@ -61,7 +63,7 @@ public class Observable<Observed> {
     }
 }
 
-public class ObserverList<Observed> {
+public final class ObserverList<Observed> {
     public typealias Observer = (Observed) -> Void
     fileprivate var observers: [UUID: (DispatchQueue, Observer)] = [:]
 
@@ -83,7 +85,7 @@ public class ObserverList<Observed> {
     }
 }
 
-public class ObserverNotifier<Observed> {
+public final class ObserverNotifier<Observed> {
     public let observerList = ObserverList<Observed>()
 
     public init() {}
