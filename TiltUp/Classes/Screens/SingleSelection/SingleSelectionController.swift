@@ -47,8 +47,13 @@ public final class SingleSelectionController<Value: SingleSelectionableRow>: UIT
         viewModel.viewObservers.toolbarButtonTitle = { [weak self] title in
             guard let self = self else { return }
 
-            let item = UIBarButtonItem(title: title, style: .plain, target: self, action: #selector(self.tappedToolbarButton))
-            self.setToolbarItems([item], animated: false)
+            let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+            let button = UIBarButtonItem(title: title, style: .plain, target: self, action: #selector(self.tappedToolbarButton))
+            self.setToolbarItems([spacer, button, spacer], animated: false)
+        }
+
+        viewModel.viewObservers.toolbarHidden = { [weak self] hidden, animated in
+            self?.navigationController?.setToolbarHidden(hidden, animated: animated)
         }
 
         viewModel.viewObservers.rowUpdated = { [weak self] indexPath in
@@ -67,9 +72,7 @@ public final class SingleSelectionController<Value: SingleSelectionableRow>: UIT
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        viewModel.viewObservers.toolbarHidden = { [weak self] hidden in
-            self?.navigationController?.setToolbarHidden(hidden, animated: animated)
-        }
+        viewModel.updateToolbarHidden(animated: animated)
     }
 
     // MARK: - UITableViewDataSource

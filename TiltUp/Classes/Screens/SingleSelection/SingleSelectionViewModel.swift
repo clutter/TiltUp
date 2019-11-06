@@ -31,7 +31,7 @@ public enum SingleSelection {
         var navTitle: ((String) -> Void)?
         var confirmButtonEnabled: ((Bool) -> Void)?
         var confirmButtonTitle: ((String) -> Void)?
-        var toolbarHidden: ((Bool) -> Void)?
+        var toolbarHidden: ((_ hidden: Bool, _ animated: Bool) -> Void)?
         var toolbarButtonTitle: ((String?) -> Void)?
         var rowUpdated: ((IndexPath) -> Void)?
     }
@@ -98,8 +98,13 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
         viewObservers.navTitle?(navTitle)
         viewObservers.confirmButtonEnabled?(selectedIndexPath != nil)
         viewObservers.confirmButtonTitle?(confirmButtonTitle)
-        viewObservers.toolbarHidden?(toolbarHidden)
         viewObservers.toolbarButtonTitle?(toolbarButtonTitle)
+
+        updateToolbarHidden(animated: false)
+    }
+
+    public func updateToolbarHidden(animated: Bool) {
+        viewObservers.toolbarHidden?(toolbarHidden, animated)
     }
 
     var selectedIndexPath: IndexPath? {
