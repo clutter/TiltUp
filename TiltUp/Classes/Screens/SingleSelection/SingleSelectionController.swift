@@ -124,12 +124,10 @@ private extension SingleSelectionController {
         cell.textLabel?.text = row.value.singleSelectionableRow.title
         cell.detailTextLabel?.text = row.value.singleSelectionableRow.subtitle
 
-        if row.isSelected {
-            cell.accessoryType = .checkmark
-        } else if row.value.singleSelectionableRow.hasNextStep {
+        if row.value.singleSelectionableRow.hasNextStep {
             cell.accessoryType = .disclosureIndicator
         } else {
-            cell.accessoryType = .none
+            cell.accessoryType = row.isSelected ? .checkmark : .none
         }
     }
 }
