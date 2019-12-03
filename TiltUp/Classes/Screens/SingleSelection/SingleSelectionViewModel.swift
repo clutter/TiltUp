@@ -143,7 +143,7 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
 
     // MARK: - Actions
 
-    public func selectedRow(at indexPath: IndexPath) {
+    private func updateSelection(to indexPath: IndexPath) {
         for (sectionIndex, section) in sections.enumerated() {
             for (rowIndex, row) in section.rows.enumerated() where row.isSelected {
                 sections[sectionIndex].rows[rowIndex].isSelected = false
@@ -155,6 +155,14 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
 
         viewObservers.confirmButtonEnabled?(selectedIndexPath != nil)
         viewObservers.confirmButtonTitle?(confirmButtonTitle)
+    }
+
+    public func preselectRow(at indexPath: IndexPath) {
+        updateSelection(to: indexPath)
+    }
+
+    func selectedRow(at indexPath: IndexPath) {
+        updateSelection(to: indexPath)
 
         let value = sections[indexPath.section].rows[indexPath.row].value
         if value.singleSelectionableRow.hasNextStep {
