@@ -26,6 +26,8 @@ public final class SingleSelectionController<Value: SingleSelectionableRow>: UIT
     public override func viewDidLoad() {
         super.viewDidLoad()
 
+        clearsSelectionOnViewWillAppear = false
+
         if navigationController?.viewControllers.first == self {
             navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(tappedCancelButton))
         }

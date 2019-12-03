@@ -24,7 +24,7 @@ final class SingleSelectionViewModelTests: XCTestCase {
 
     func testCheckmarks() {
         let viewModel = SingleSelectionViewModel<TestRow>(rows: [.row1, .row2], navTitle: "Test")
-        viewModel.selectedRow(at: IndexPath(row: 0, section: 0))
+        viewModel.preselectRow(at: IndexPath(row: 0, section: 0))
     }
 
     func testCancel() {
@@ -43,7 +43,7 @@ final class SingleSelectionViewModelTests: XCTestCase {
         var confirmedRow: TestRow?
         viewModel.coordinatorObservers.tappedConfirm = { confirmedRow = $0 }
 
-        viewModel.selectedRow(at: IndexPath(row: 0, section: 0))
+        viewModel.preselectRow(at: IndexPath(row: 0, section: 0))
         viewModel.tappedConfirmButton()
         XCTAssertEqual(confirmedRow, .row1)
     }
