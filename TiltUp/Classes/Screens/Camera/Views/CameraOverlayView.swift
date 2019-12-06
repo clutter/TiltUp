@@ -45,6 +45,8 @@ final class CameraOverlayView: UIView {
         case confirm(image: UIImage, canContinue: Bool)
     }
 
+    private var hint: (_ numberOfPhotos: Int) -> String?
+
     var state = State.start(count: 0, canComplete: false) {
         didSet {
             switch state {
@@ -58,6 +60,8 @@ final class CameraOverlayView: UIView {
                 retakeButton.isHidden = true
                 saveButton.isHidden = true
                 shutterButton.isHidden = false
+
+                hintLabel.text = hint(count)
 
             case .capture:
                 cancelButton.isHidden = true
@@ -286,18 +290,20 @@ final class CameraOverlayView: UIView {
         return button
     }()
 
-    required init(hint: String?) {
+    required init(hint: @escaping (_ numberOfPhotos: Int) -> String?) {
+        self.hint = hint
+
         super.init(frame: .zero)
 
         setUpViews()
-
-        if let hint = hint {
-            hintLabel.text = hint
-        }
+        hintLabel.text = hint(0)
     }
 
     required init?(coder aDecoder: NSCoder) {
+        hint = { _ in nil }
+
         super.init(coder: aDecoder)
+
         setUpViews()
     }
 
