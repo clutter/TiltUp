@@ -10,10 +10,6 @@ custom_rules:
     name: "Weak Root Coordinator"
     message: "Root coordinators should be weak to avoid reference cycles."
     regex: "(?<!weak )var rootCoordinator: RootCoordinator\\?(?! \\{ get (set )?\\})"
-  dress_code_colors:
-    name: "DressCode Colors"
-    message: "Colors should be accessed via the Color type provided by DressCode."
-    regex: '(?<=(\bUIColor)|[^\w])\.(black|darkGray|lightGray|white|gray|red|green|blue|cyan|yellow|magenta|orange|purple|brown|clear)\b(?!\()|UIColor(\.init)?\(\s*(white|hue|red|displayP3Red|named|ciColor|cgColor)'
 file_length:
   warning: 600
 identifier_name:
