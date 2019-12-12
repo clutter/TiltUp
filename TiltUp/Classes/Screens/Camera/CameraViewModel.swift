@@ -282,7 +282,7 @@ private extension CameraViewModel {
         resetFocus()
 
         if let data = photoCaptureDelegate.photoData, let image = UIImage(data: data) {
-            viewObservers.updateOverlayState?(.confirm(image: image, canContinue: photos.count + 1 <= settings.numberOfPhotos.upperBound))
+            viewObservers.updateOverlayState?(.confirm(image: image, canContinue: photos.count + 2 <= settings.numberOfPhotos.upperBound))
         }
 
         // When the capture is complete, remove a reference to the photo capture delegate so it can be deallocated.
