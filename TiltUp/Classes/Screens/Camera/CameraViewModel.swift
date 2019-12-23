@@ -340,7 +340,7 @@ extension CameraViewModel {
                 device.focusMode = focusMode
             }
 
-            let exposureMode: AVCaptureDevice.ExposureMode = .autoExpose
+            let exposureMode: AVCaptureDevice.ExposureMode = .continuousAutoExposure
             if device.isExposurePointOfInterestSupported, device.isExposureModeSupported(exposureMode) {
                 device.exposurePointOfInterest = devicePoint
                 device.exposureMode = exposureMode
