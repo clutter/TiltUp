@@ -195,6 +195,7 @@ private extension CameraViewModel {
         session.commitConfiguration()
 
         setupResult = .success
+        resetFocus()
 
         viewObservers.updatePreviewSession?(session)
     }
