@@ -20,4 +20,7 @@ final class HomeController: UIViewController, StoryboardViewController {
 
         viewModel.start()
     }
+    @IBAction func cameraButtonTapped(_ sender: Any) {
+        viewModel.cameraButtonTapped()
+    }
 }

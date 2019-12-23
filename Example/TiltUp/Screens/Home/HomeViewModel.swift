@@ -10,7 +10,7 @@ import Foundation
 
 enum Home {
     final class CoordinatorObservers {
-        // TODO: Define the actions that the ViewModel can call on the HomeCoordinator
+        var goToCamera: (() -> Void)?
     }
 
     final class ViewObservers {
@@ -24,6 +24,7 @@ protocol HomeViewModeling {
 
     // TODO: Define the functions that HomeController can call on the viewModel
     func start()
+    func cameraButtonTapped()
 }
 
 final class HomeViewModel: HomeViewModeling {
@@ -40,5 +41,9 @@ final class HomeViewModel: HomeViewModeling {
 
     func start() {
         // TODO: Setup that should be called once the HomeController has loaded
+    }
+
+    func cameraButtonTapped() {
+        coordinatorObservers.goToCamera?()
     }
 }

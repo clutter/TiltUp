@@ -24,6 +24,11 @@ private extension HomeCoordinator {
         let viewModel = HomeViewModel()
         controller.viewModel = viewModel
 
+        viewModel.coordinatorObservers.goToCamera = {
+            let coordinator = CameraCoordinator(parent: self)
+            coordinator.start()
+        }
+
         // TODO: Set viewModel.coordinatorObservers
 
         // TODO: Decide whether to replaceRoot / push / present modally
