@@ -366,6 +366,8 @@ extension CameraViewModel {
                 device.focusMode = focusMode
             }
 
+            device.whiteBalanceMode = AVCaptureDevice.WhiteBalanceMode.continuousAutoWhiteBalance
+
             let exposureMode: AVCaptureDevice.ExposureMode = .continuousAutoExposure
             if device.isExposurePointOfInterestSupported, device.isExposureModeSupported(exposureMode) {
                 device.exposureMode = exposureMode
