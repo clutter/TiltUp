@@ -121,6 +121,8 @@ public final class CameraViewModel: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationChanged), name: UIDevice.orientationDidChangeNotification, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(wasInterrupted), name: .AVCaptureSessionWasInterrupted, object: session)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(subjectAreaChanged), name: .AVCaptureDeviceSubjectAreaDidChange, object: nil)
     }
 
     func viewWillAppear() {
@@ -248,6 +250,10 @@ private extension CameraViewModel {
     @objc private func wasInterrupted() {
         logger.info("Camera session is interrupted: \(session.isInterrupted)")
     }
+
+    @objc private func subjectAreaChanged() {
+        resetFocus()
+    }
 }
 
 // MARK: Capture
@@ -339,6 +345,8 @@ extension CameraViewModel {
                 device.exposurePointOfInterest = devicePoint
                 device.exposureMode = exposureMode
             }
+
+            device.isSubjectAreaChangeMonitoringEnabled = true
         }
     }
 
@@ -360,10 +368,15 @@ extension CameraViewModel {
         guard setupResult == .success else { return }
 
         let device = videoDeviceInput.device
+        let defaultDevicePoint = CGPoint(x: 0.5, y: 0.5)
 
         configCamera(device) {
             let focusMode: AVCaptureDevice.FocusMode = .continuousAutoFocus
             if device.isFocusModeSupported(focusMode) {
+                if device.isFocusPointOfInterestSupported {
+                    device.focusPointOfInterest = defaultDevicePoint
+                }
+
                 device.focusMode = focusMode
             }
 
@@ -371,8 +384,14 @@ extension CameraViewModel {
 
             let exposureMode: AVCaptureDevice.ExposureMode = .continuousAutoExposure
             if device.isExposureModeSupported(exposureMode) {
+                if device.isExposurePointOfInterestSupported {
+                    device.exposurePointOfInterest = defaultDevicePoint
+                }
+
                 device.exposureMode = exposureMode
             }
+
+            device.isSubjectAreaChangeMonitoringEnabled = false
         }
     }
 
