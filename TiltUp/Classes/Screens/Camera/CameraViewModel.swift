@@ -121,6 +121,8 @@ public final class CameraViewModel: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationChanged), name: UIDevice.orientationDidChangeNotification, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(wasInterrupted), name: .AVCaptureSessionWasInterrupted, object: session)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(subjectAreaChanged), name: .AVCaptureDeviceSubjectAreaDidChange, object: nil)
     }
 
     func viewWillAppear() {
@@ -195,6 +197,7 @@ private extension CameraViewModel {
         session.commitConfiguration()
 
         setupResult = .success
+        resetFocus()
 
         viewObservers.updatePreviewSession?(session)
     }
@@ -246,6 +249,10 @@ private extension CameraViewModel {
 
     @objc private func wasInterrupted() {
         logger.info("Camera session is interrupted: \(session.isInterrupted)")
+    }
+
+    @objc private func subjectAreaChanged() {
+        resetFocus()
     }
 }
 
@@ -333,11 +340,13 @@ extension CameraViewModel {
                 device.focusMode = focusMode
             }
 
-            let exposureMode: AVCaptureDevice.ExposureMode = .autoExpose
+            let exposureMode: AVCaptureDevice.ExposureMode = .continuousAutoExposure
             if device.isExposurePointOfInterestSupported, device.isExposureModeSupported(exposureMode) {
                 device.exposurePointOfInterest = devicePoint
                 device.exposureMode = exposureMode
             }
+
+            device.isSubjectAreaChangeMonitoringEnabled = true
         }
     }
 
@@ -359,17 +368,30 @@ extension CameraViewModel {
         guard setupResult == .success else { return }
 
         let device = videoDeviceInput.device
+        let defaultDevicePoint = CGPoint(x: 0.5, y: 0.5)
 
         configCamera(device) {
             let focusMode: AVCaptureDevice.FocusMode = .continuousAutoFocus
-            if device.isFocusPointOfInterestSupported, device.isFocusModeSupported(focusMode) {
+            if device.isFocusModeSupported(focusMode) {
+                if device.isFocusPointOfInterestSupported {
+                    device.focusPointOfInterest = defaultDevicePoint
+                }
+
                 device.focusMode = focusMode
             }
 
+            device.whiteBalanceMode = AVCaptureDevice.WhiteBalanceMode.continuousAutoWhiteBalance
+
             let exposureMode: AVCaptureDevice.ExposureMode = .continuousAutoExposure
-            if device.isExposurePointOfInterestSupported, device.isExposureModeSupported(exposureMode) {
+            if device.isExposureModeSupported(exposureMode) {
+                if device.isExposurePointOfInterestSupported {
+                    device.exposurePointOfInterest = defaultDevicePoint
+                }
+
                 device.exposureMode = exposureMode
             }
+
+            device.isSubjectAreaChangeMonitoringEnabled = false
         }
     }
 

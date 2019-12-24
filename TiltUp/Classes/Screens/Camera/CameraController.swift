@@ -111,6 +111,7 @@ extension CameraController {
         let point = tap.location(in: previewView)
 
         guard point.x.isFinite && point.y.isFinite else { return }
+        guard previewView.frame.contains(point) else { return }
 
         let devicePoint = previewView.videoPreviewLayer.captureDevicePointConverted(fromLayerPoint: point)
 
