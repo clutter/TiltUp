@@ -87,6 +87,7 @@ public final class CameraController: UIViewController {
         overlayView.addGestureRecognizer(pinch)
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        tap.numberOfTapsRequired = 2
         overlayView.addGestureRecognizer(tap)
     }
 
