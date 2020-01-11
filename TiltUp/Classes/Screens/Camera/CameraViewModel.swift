@@ -26,6 +26,7 @@ public enum Camera {
     }
 
     final class ViewObservers {
+        var pointOfInterestReset:(() -> Void)?
         var presentAlert: ((UIAlertController) -> Void)?
         var rotateInterface: ((AVCaptureVideoOrientation) -> Void)?
         var updateOverlayState: ((CameraOverlayView.State) -> Void)?
@@ -253,6 +254,7 @@ private extension CameraViewModel {
 
     @objc private func subjectAreaChanged() {
         resetFocus()
+        viewObservers.pointOfInterestReset?()
     }
 }
 

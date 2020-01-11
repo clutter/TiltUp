@@ -41,6 +41,13 @@ public final class CameraController: UIViewController {
 
         view.backgroundColor = .black
 
+        viewModel.viewObservers.pointOfInterestReset = { [weak self] in
+            DispatchQueue.main.async {
+                guard let previewView = self?.previewView else { return }
+                self?.focusAnimation(at: CGPoint(x: previewView.bounds.midX, y: previewView.bounds.midY))
+            }
+        }
+
         viewModel.viewObservers.presentAlert = { [weak self] alert in
             DispatchQueue.main.async {
                 self?.present(alert, animated: true)
@@ -80,6 +87,7 @@ public final class CameraController: UIViewController {
         overlayView.addGestureRecognizer(pinch)
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        tap.numberOfTapsRequired = 2
         overlayView.addGestureRecognizer(tap)
     }
 
