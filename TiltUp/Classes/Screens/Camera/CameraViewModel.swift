@@ -281,6 +281,7 @@ private extension CameraViewModel {
         }
 
         photoSettings.isAutoStillImageStabilizationEnabled = true
+        photoSettings.isHighResolutionPhotoEnabled = true
 
         let photoCaptureDelegate = PhotoCaptureDelegate(uniqueID: photoSettings.uniqueID,
                                                         willCapturePhotoAnimation: viewObservers.willCapturePhotoAnimation,
