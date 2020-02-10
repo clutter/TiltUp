@@ -119,7 +119,12 @@ extension CameraController {
         let point = tap.location(in: previewView)
 
         guard point.x.isFinite && point.y.isFinite else { return }
-        guard previewView.frame.contains(point) else { return }
+
+        let insetOfPreviewBounds = previewView.bounds.insetBy(
+            dx: CameraController.focusViewFrame.width / 2,
+            dy: CameraController.focusViewFrame.height / 2
+        )
+        guard insetOfPreviewBounds.contains(point) else { return }
 
         let devicePoint = previewView.videoPreviewLayer.captureDevicePointConverted(fromLayerPoint: point)
 
@@ -127,8 +132,10 @@ extension CameraController {
         viewModel.focusCamera(at: devicePoint)
     }
 
+    static let focusViewFrame = CGRect(x: 0, y: 0, width: 70, height: 70)
+
     func focusAnimation(at point: CGPoint) {
-        let focusView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
+        let focusView = UIView(frame: CameraController.focusViewFrame)
         focusView.layer.borderColor = UIColor(red: 0xFF / 0xFF, green: 0xB8 / 0xFF, blue: 0x18 / 0xFF, alpha: 1.0).cgColor
         focusView.layer.borderWidth = 1
         focusView.center = point
