@@ -32,6 +32,7 @@ public enum Camera {
         var updateOverlayState: ((CameraOverlayView.State) -> Void)?
         var updatePreviewSession: ((AVCaptureSession) -> Void)?
         var willCapturePhotoAnimation: (() -> Void)?
+        var didCapturePhotoAnimation: (() -> Void)?
     }
 }
 
@@ -303,6 +304,8 @@ private extension CameraViewModel {
         sessionQueue.async {
             self.inProgressPhotoCaptureDelegates[photoCaptureDelegate.uniqueID] = nil
         }
+
+        viewObservers.didCapturePhotoAnimation?()
     }
 }
 

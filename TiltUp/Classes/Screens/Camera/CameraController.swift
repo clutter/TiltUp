@@ -71,6 +71,12 @@ public final class CameraController: UIViewController {
             DispatchQueue.main.async {
                 self.generator.impactOccurred()
                 self.previewView.videoPreviewLayer.opacity = 0
+            }
+        }
+
+        viewModel.viewObservers.didCapturePhotoAnimation = { [weak self] in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
                 UIView.animate(withDuration: 0.25) {
                     self.previewView.videoPreviewLayer.opacity = 1
                 }
