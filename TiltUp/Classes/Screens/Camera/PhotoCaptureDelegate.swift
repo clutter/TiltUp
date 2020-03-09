@@ -18,7 +18,9 @@ final class PhotoCaptureDelegate: NSObject {
     private let willCapturePhotoAnimation: (() -> Void)?
     private let completionHandler: (PhotoCaptureDelegate) -> Void
 
-    private(set) var photoData: Data?
+    private(set) var photoCapture: PhotoCapture?
+    private(set) var expectedDuration: CMTime?
+    private var photoStartedAt: Date?
 
     init(uniqueID: Int64,
          willCapturePhotoAnimation: (() -> Void)?,
@@ -38,14 +40,28 @@ final class PhotoCaptureDelegate: NSObject {
 
 extension PhotoCaptureDelegate: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
+        photoStartedAt = Date()
+
         willCapturePhotoAnimation?()
+        if #available(iOS 13.0, *) {
+            expectedDuration  = resolvedSettings.photoProcessingTimeRange.start + resolvedSettings.photoProcessingTimeRange.duration
+        } else {
+            expectedDuration = CMTime(seconds: 0, preferredTimescale: 1)
+        }
     }
 
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if let error = error {
             logger.bug("Error capturing photo: \(error)")
         } else {
-            photoData = photo.fileDataRepresentation()
+            let expectedCaptureDuration = expectedDuration.map(CMTimeGetSeconds) ?? 0
+            let actualCaptureDuration = photoStartedAt.map { -$0.timeIntervalSinceNow } ?? 0
+
+            photoCapture = PhotoCapture(
+                capture: photo,
+                expectedCaptureDuration: .init(value: expectedCaptureDuration, unit: .seconds),
+                actualCaptureDuration: .init(value: actualCaptureDuration, unit: .seconds)
+            )
         }
     }
 
@@ -56,13 +72,13 @@ extension PhotoCaptureDelegate: AVCapturePhotoCaptureDelegate {
             return
         }
 
-        guard let photoData = photoData else {
-            logger.bug("No photo data resource")
+        guard let photoCapture = photoCapture else {
+            logger.bug("No photo capture after didFinishCapture")
             didFinish()
             return
         }
 
-        self.photoData = photoData
+        self.photoCapture = photoCapture
         didFinish()
     }
 }

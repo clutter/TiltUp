@@ -22,7 +22,7 @@ public enum Camera {
 
     public final class CoordinatorObservers {
         public var tappedCancel: (() -> Void)?
-        public var capturedPhotos: (([UIImage]) -> Void)?
+        public var capturedPhotos: (([PhotoCapture]) -> Void)?
     }
 
     final class ViewObservers {
@@ -64,7 +64,7 @@ public final class CameraViewModel: NSObject {
     private let photoOutput = AVCapturePhotoOutput()
     private var inProgressPhotoCaptureDelegates = [Int64: PhotoCaptureDelegate]()
 
-    private var photos = [UIImage]()
+    private var photos = [PhotoCapture]()
 
     private var currentVideoOrientation = AVCaptureVideoOrientation.portrait {
         didSet {
@@ -296,8 +296,13 @@ private extension CameraViewModel {
     func capturePhotoCompletion(_ photoCaptureDelegate: PhotoCaptureDelegate) {
         resetFocus()
 
-        if let data = photoCaptureDelegate.photoData, let image = UIImage(data: data) {
-            viewObservers.updateOverlayState?(.confirm(image: image, canContinue: photos.count + 2 <= settings.numberOfPhotos.upperBound))
+        if let photoCapture = photoCaptureDelegate.photoCapture {
+            viewObservers.updateOverlayState?(
+                .confirm(
+                    photoCapture: photoCapture,
+                    canContinue: photos.count + 2 <= settings.numberOfPhotos.upperBound
+                )
+            )
         }
 
         // When the capture is complete, remove a reference to the photo capture delegate so it can be deallocated.
@@ -448,8 +453,8 @@ extension CameraViewModel: CameraOverlayViewDelegate {
         viewObservers.updateOverlayState?(.start(count: photos.count, canComplete: photos.count >= settings.numberOfPhotos.lowerBound))
     }
 
-    func usePicture(_ image: UIImage, canContinue: Bool) {
-        photos.append(image)
+    func usePicture(_ photoCapture: PhotoCapture, canContinue: Bool) {
+        photos.append(photoCapture)
 
         if canContinue {
             viewObservers.updateOverlayState?(.start(count: photos.count, canComplete: photos.count >= settings.numberOfPhotos.lowerBound))

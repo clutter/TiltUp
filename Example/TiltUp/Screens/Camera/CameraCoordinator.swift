@@ -29,8 +29,17 @@ private extension CameraCoordinator {
             guard let self = self else { return }
             self.router.dismissModal()
         }
-        viewModel.coordinatorObservers.capturedPhotos = { photos in
-            print("Photo Captured \(photos.count)")
+        viewModel.coordinatorObservers.capturedPhotos = { photoCaptures in
+            print("Captured \(photoCaptures.count) Photos")
+            for (i, photoCapture) in photoCaptures.enumerated() {
+                print(
+                    """
+                    Photo \(i):
+                        Expected Duration: \(photoCapture.expectedCaptureDuration.converted(to: .seconds))
+                        Actual Duration: \(photoCapture.actualCaptureDuration.converted(to: .seconds))
+                    """
+                )
+            }
         }
 
         let cameraController = CameraController(viewModel: viewModel, hint: { numberOfPhotos in
