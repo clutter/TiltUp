@@ -14,7 +14,7 @@ protocol CameraOverlayViewDelegate: AnyObject {
     func confirmPictures()
     func takePicture()
     func retakePicture()
-    func usePicture(_ image: UIImage, canContinue: Bool)
+    func usePicture(_ photoCapture: PhotoCapture, canContinue: Bool)
     func cancelCamera()
 }
 
@@ -42,7 +42,7 @@ final class CameraOverlayView: UIView {
     enum State {
         case start(count: Int, canComplete: Bool)
         case capture
-        case confirm(image: UIImage, canContinue: Bool)
+        case confirm(photoCapture: PhotoCapture, canContinue: Bool)
     }
 
     private var hint: (_ numberOfPhotos: Int) -> String?
@@ -72,16 +72,12 @@ final class CameraOverlayView: UIView {
                 saveButton.isHidden = true
                 shutterButton.isHidden = true
 
-            case let .confirm(image, canContinue):
+            case let .confirm(photoCapture, canContinue):
                 cancelButton.isHidden = true
                 countLabel.isHidden = true
                 doneButton.isHidden = true
                 flashButton.isHidden = true
-                if let cgImage = image.cgImage {
-                    previewImageView.image = UIImage(cgImage: cgImage, scale: image.scale, orientation: .right)
-                } else {
-                    previewImageView.image = image
-                }
+                previewImageView.image = UIImage(data: photoCapture.fileDataRepresentation)
                 retakeButton.isHidden = false
                 saveButton.setTitle(canContinue ? "Continue" : "Use Photo", for: .normal)
                 saveButton.isHidden = false
