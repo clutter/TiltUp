@@ -26,3 +26,20 @@ public struct PhotoCapture {
         self.actualCaptureDuration = actualCaptureDuration
     }
 }
+
+// Mark: - Stubbing Support
+
+public extension PhotoCapture {
+    init?(
+        forStubbingWith image: UIImage,
+        expectedCaptureDuration: Measurement<UnitDuration>,
+        actualCaptureDuration: Measurement<UnitDuration>
+    ) {
+        guard let data = image.heicData(compressionQuality: 1.0) else {
+            return nil
+        }
+        self.fileDataRepresentation = data
+        self.expectedCaptureDuration = expectedCaptureDuration
+        self.actualCaptureDuration = actualCaptureDuration
+    }
+}
