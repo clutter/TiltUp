@@ -27,7 +27,7 @@ public struct PhotoCapture {
     }
 }
 
-// Mark: - Stubbing Support
+// MARK: - Stubbing Support
 
 public extension PhotoCapture {
     init?(
