@@ -10,13 +10,22 @@ import XCTest
 
 public extension XCTestCase {
     func testUI(setup: @escaping () -> Void, assertions: @escaping () -> Void) {
+        var cancellableSetup: (() -> Void)? = setup
+        var cancellableAssertions: (() -> Void)? = assertions
         let mainThreadExpectation = expectation(description: "Wait for main thread code to run")
-
-        UIView.animate(withDuration: 0.0, animations: setup, completion: { _ in
-            assertions()
-            mainThreadExpectation.fulfill()
-        })
+        UIView.animate(
+            withDuration: 0.0,
+            animations: {
+                cancellableSetup?()
+            },
+            completion: { _ in
+                cancellableAssertions?()
+                mainThreadExpectation.fulfill()
+            }
+        )
 
         wait(for: [mainThreadExpectation])
+        cancellableSetup = nil
+        cancellableAssertions = nil
     }
 }
