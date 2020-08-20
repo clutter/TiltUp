@@ -22,6 +22,6 @@ end
 platform :ios do
   desc "Runs all the tests"
   lane :test do
-    scan(workspace: "Example/TiltUp.xcworkspace", scheme: "TiltUp-Example", device: "iPhone 7", clean: true)
+    scan(workspace: "Example/TiltUp.xcworkspace", scheme: "TiltUp-Example", device: "iPhone 8", clean: true)
   end
 end
