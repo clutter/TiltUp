@@ -8,12 +8,12 @@
 
 import UIKit
 
-protocol IdentifierView: AnyObject {
+public protocol IdentifierView: AnyObject {
     static var identifier: String { get }
     static var nib: UINib { get }
 }
 
-extension IdentifierView {
+public extension IdentifierView {
     static var identifier: String {
         return String(describing: self)
     }
@@ -25,7 +25,7 @@ extension IdentifierView {
 
 // MARK: - UITableView
 
-extension UITableView {
+public extension UITableView {
     func registerNib(for cellClass: (UITableViewCell & IdentifierView).Type) {
         register(cellClass.nib, forCellReuseIdentifier: cellClass.identifier)
     }
@@ -40,14 +40,14 @@ extension UITableView {
     }
 }
 
-extension UITableView {
+public extension UITableView {
     func dequeueOrCreateCell(withStyle style: UITableViewCell.CellStyle, reuseIdentifier: String) -> UITableViewCell {
         return dequeueReusableCell(withIdentifier: reuseIdentifier)
             ?? UITableViewCell(style: style, reuseIdentifier: reuseIdentifier)
     }
 }
 
-extension UITableView {
+public extension UITableView {
     func registerNib(forHeaderFooter viewClass: (UIView & IdentifierView).Type) {
         register(UINib(nibName: viewClass.identifier, bundle: nil), forHeaderFooterViewReuseIdentifier: viewClass.identifier)
     }
@@ -60,7 +60,7 @@ extension UITableView {
 
 // MARK: - UICollectionView
 
-extension UICollectionView {
+public extension UICollectionView {
     func registerNib(for cellClass: (UICollectionViewCell & IdentifierView).Type) {
         register(cellClass.nib, forCellWithReuseIdentifier: cellClass.identifier)
     }
@@ -75,7 +75,7 @@ extension UICollectionView {
     }
 }
 
-extension UICollectionView {
+public extension UICollectionView {
     func registerNib(for viewClass: (UICollectionReusableView & IdentifierView).Type, forKind kind: String) {
         register(viewClass.nib, forSupplementaryViewOfKind: kind, withReuseIdentifier: viewClass.identifier)
     }
