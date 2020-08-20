@@ -45,7 +45,7 @@ public extension Router {
         navigationController.popToRootViewController(animated: false)
         popHandlers = [:]
         popHandlers[viewController] = popHandler
-        guard let window = UIApplication.shared.keyWindow else {
+        guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else {
             navigationController.viewControllers = [viewController]
             return
         }

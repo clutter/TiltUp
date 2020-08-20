@@ -25,7 +25,7 @@ TODO: Add long description of the pod here.
 
   s.author           = { 'Erik Strottmann' => 'erik.strottmann@clutter.com' }
 
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '13.3'
   s.swift_versions        = ['5.1']
 
   s.pod_target_xcconfig = { 'ENABLE_BITCODE' => 'NO' }

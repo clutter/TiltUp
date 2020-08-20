@@ -25,7 +25,7 @@ TODO: Add long description of the pod here.
 
   s.author           = { 'Jeremy Grenier' => 'jeremy.grenier@clutter.com' }
 
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '13.3'
   s.swift_versions        = ['5.1']
 
   s.source       = { :git => "git@github.com:clutter/TiltUp.git", :tag => "#{s.version}" }
