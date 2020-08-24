@@ -281,7 +281,6 @@ private extension CameraViewModel {
             photoSettings.flashMode = flashMode
         }
 
-        photoSettings.isAutoStillImageStabilizationEnabled = true
         photoSettings.isHighResolutionPhotoEnabled = true
 
         let photoCaptureDelegate = PhotoCaptureDelegate(uniqueID: photoSettings.uniqueID,

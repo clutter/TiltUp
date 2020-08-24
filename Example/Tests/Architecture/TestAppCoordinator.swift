@@ -22,7 +22,7 @@ final class TestAppCoordinator: AppCoordinating {
         router = Router(navigationController: testNavigation)
 
         // swiftlint:disable:next force_unwrapping
-        window = UIApplication.shared.keyWindow!
+        window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })!
         window.rootViewController = testNavigation
     }
 
