@@ -278,9 +278,7 @@ private extension CameraViewModel {
             photoSettings = AVCapturePhotoSettings()
         }
 
-        if #available(iOS 13, *) {
-            photoSettings.photoQualityPrioritization = .quality
-        }
+        photoSettings.photoQualityPrioritization = .quality
 
         if videoDeviceInput.device.isFlashAvailable {
             photoSettings.flashMode = flashMode
