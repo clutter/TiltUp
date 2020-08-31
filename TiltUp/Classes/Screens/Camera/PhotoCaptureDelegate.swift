@@ -43,11 +43,7 @@ extension PhotoCaptureDelegate: AVCapturePhotoCaptureDelegate {
         photoStartedAt = Date()
 
         willCapturePhotoAnimation?()
-        if #available(iOS 13.0, *) {
-            expectedDuration  = resolvedSettings.photoProcessingTimeRange.start + resolvedSettings.photoProcessingTimeRange.duration
-        } else {
-            expectedDuration = CMTime(seconds: 0, preferredTimescale: 1)
-        }
+        expectedDuration  = resolvedSettings.photoProcessingTimeRange.start + resolvedSettings.photoProcessingTimeRange.duration
     }
 
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {

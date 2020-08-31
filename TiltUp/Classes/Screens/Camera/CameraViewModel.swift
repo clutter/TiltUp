@@ -61,7 +61,12 @@ public final class CameraViewModel: NSObject {
 
     private var videoDeviceInput: AVCaptureDeviceInput!
 
-    private let photoOutput = AVCapturePhotoOutput()
+    private lazy var photoOutput: AVCapturePhotoOutput = {
+        let output = AVCapturePhotoOutput()
+        output.maxPhotoQualityPrioritization = .quality
+        return output
+    }()
+
     private var inProgressPhotoCaptureDelegates = [Int64: PhotoCaptureDelegate]()
 
     private var photos = [PhotoCapture]()
@@ -273,9 +278,7 @@ private extension CameraViewModel {
             photoSettings = AVCapturePhotoSettings()
         }
 
-        if #available(iOS 13, *) {
-            photoSettings.photoQualityPrioritization = .quality
-        }
+        photoSettings.photoQualityPrioritization = .quality
 
         if videoDeviceInput.device.isFlashAvailable {
             photoSettings.flashMode = flashMode
