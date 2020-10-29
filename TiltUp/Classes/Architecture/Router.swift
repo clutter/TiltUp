@@ -6,6 +6,7 @@
 //  Copyright © 2019 Clutter. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 public final class Router: NSObject {
@@ -14,6 +15,14 @@ public final class Router: NSObject {
     private var popHandlers: [UIViewController: (() -> Void)] = [:]
     private var dismissHandler: (() -> Void)?
     private var presentedRouter: Router?
+
+    public var topViewControllerSubject: PassthroughSubject<UIViewController, Never> = .init()
+
+    public enum ModalChange {
+        case presented(UIViewController)
+        case dismissed
+    }
+    public var presentedViewControllerSubject: PassthroughSubject<ModalChange, Never> = .init()
 
     public init(navigationController: UINavigationController = UINavigationController()) {
         self.navigationController = navigationController
@@ -91,8 +100,11 @@ public extension Router {
     // MARK: Presenting modals
     func presentModal(_ viewController: UIViewController, animated: Bool = true, presentationStyle: UIModalPresentationStyle = .fullScreen, dismissHandler: (() -> Void)? = nil) {
         viewController.modalPresentationStyle = presentationStyle
-        navigationController.present(viewController, animated: animated) {
-            self.dismissHandler = dismissHandler
+        navigationController.present(viewController, animated: animated) { [weak self] in
+            self?.dismissHandler = dismissHandler
+            self?.presentedViewControllerSubject.send(
+                .presented(viewController)
+            )
         }
     }
 
@@ -109,13 +121,19 @@ public extension Router {
         dismissHandler?()
         dismissHandler = nil
 
-        navigationController.dismiss(animated: animated, completion: completion)
+        let completionWrapper: () -> Void = { [weak self] in
+            completion?()
+            self?.presentedViewControllerSubject.send(.dismissed)
+        }
+
+        navigationController.dismiss(animated: animated, completion: completionWrapper)
     }
 }
 
 // MARK: - UINavigationControllerDelegate
 extension Router: UINavigationControllerDelegate {
     public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        topViewControllerSubject.send(viewController)
         if let poppedViewController = navigationController.transitionCoordinator?.viewController(forKey: .from),
             !navigationController.viewControllers.contains(poppedViewController) {
             handlePop(for: poppedViewController)

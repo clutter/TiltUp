@@ -279,7 +279,7 @@
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
 				0B4D841C22FE4843001FE55D /* Run SwiftLint */,
-				AAE434910E1D0D10428AE15C /* [CP] Embed Pods Frameworks */,
+				BC0EA77337C4FB8873D7976B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -298,7 +298,7 @@
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
-				990D462082C7256DF35466B7 /* [CP] Embed Pods Frameworks */,
+				1F46D8ACB23AD822FF25DBEE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -391,6 +391,26 @@
 			shellPath = /bin/sh;
 			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n  ${PODS_ROOT}/SwiftLint/swiftlint\nelse\n  echo \"SwiftLint does not exist\"\n  exit 1\nfi\n";
 		};
+		1F46D8ACB23AD822FF25DBEE /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Tests/Pods-TiltUp_Tests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/TiltUp/TiltUp.framework",
+				"${BUILT_PRODUCTS_DIR}/TiltUpTest/TiltUpTest.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TiltUp.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TiltUpTest.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Tests/Pods-TiltUp_Tests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		3EC77357B2B00B40B03CBE67 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -435,25 +455,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		990D462082C7256DF35466B7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Tests/Pods-TiltUp_Tests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/TiltUpTest/TiltUpTest.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TiltUpTest.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Tests/Pods-TiltUp_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AAE434910E1D0D10428AE15C /* [CP] Embed Pods Frameworks */ = {
+		BC0EA77337C4FB8873D7976B /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
