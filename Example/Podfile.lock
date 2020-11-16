@@ -1,7 +1,7 @@
 PODS:
   - SwiftLint (0.34.0)
-  - TiltUp (2.2.0)
-  - TiltUpTest (2.2.0):
+  - TiltUp (2.2.1)
+  - TiltUpTest (2.2.1):
     - TiltUp
 
 DEPENDENCIES:
@@ -21,8 +21,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   SwiftLint: 79d48a17c6565dc286c37efb8322c7b450f95c67
-  TiltUp: 846376afd0778c2348c61ed85f6bed21f78cdb9a
-  TiltUpTest: 83a8b81249a54fe6da4c08f9191a952aae3591a8
+  TiltUp: 90d18b6807251d4899fed49d0f7b35c8261c9c8c
+  TiltUpTest: dde6107f0ca56be4f882fff79f73c8db3047b603
 
 PODFILE CHECKSUM: 59178fc1d37e1d262a19f2432a54024fd9ed50de
 
