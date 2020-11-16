@@ -32,6 +32,8 @@ public final class SingleSelectionController<Value: SingleSelectionableRow>: UIT
             navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(tappedCancelButton))
         }
 
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: viewModel.confirmButtonTitle, style: .plain, target: self, action: #selector(self.tappedConfirmButton))
+
         viewModel.viewObservers.navTitle = { [weak self] title in
             self?.navigationItem.title = title
         }
@@ -41,9 +43,7 @@ public final class SingleSelectionController<Value: SingleSelectionableRow>: UIT
         }
 
         viewModel.viewObservers.confirmButtonTitle = { [weak self] title in
-            guard let self = self else { return }
-
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: title, style: .plain, target: self, action: #selector(self.tappedConfirmButton))
+            self?.navigationItem.rightBarButtonItem?.title = title
         }
 
         viewModel.viewObservers.toolbarButtonTitle = { [weak self] title in
