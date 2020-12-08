@@ -98,19 +98,20 @@ public extension Router {
 
 public extension Router {
     // MARK: Presenting modals
-    func presentModal(_ viewController: UIViewController, animated: Bool = true, presentationStyle: UIModalPresentationStyle = .fullScreen, dismissHandler: (() -> Void)? = nil) {
+    func presentModal(_ viewController: UIViewController, animated: Bool = true, presentationStyle: UIModalPresentationStyle = .fullScreen, completionHandler: (() -> Void)? = nil,  dismissHandler: (() -> Void)? = nil) {
         viewController.modalPresentationStyle = presentationStyle
         navigationController.present(viewController, animated: animated) { [weak self] in
             self?.dismissHandler = dismissHandler
+            completionHandler?()
             self?.presentedViewControllerSubject.send(
                 .presented(viewController)
             )
         }
     }
 
-    func presentModal(_ router: Router, animated: Bool = true, presentationStyle: UIModalPresentationStyle = .fullScreen, dismissHandler: (() -> Void)? = nil) {
+    func presentModal(_ router: Router, animated: Bool = true, presentationStyle: UIModalPresentationStyle = .fullScreen, completionHandler: (() -> Void)? = nil, dismissHandler: (() -> Void)? = nil) {
         self.presentedRouter = router
-        presentModal(router.navigationController, animated: animated, presentationStyle: presentationStyle, dismissHandler: dismissHandler)
+        presentModal(router.navigationController, animated: animated, presentationStyle: presentationStyle, completionHandler: completionHandler, dismissHandler: dismissHandler)
     }
 
     // MARK: Dismissing modals
