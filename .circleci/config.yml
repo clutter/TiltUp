@@ -4,7 +4,7 @@ codecov:
 jobs:
   build-and-test:
     macos:
-      xcode: 11.6.0
+      xcode: 12.1.0
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
@@ -25,7 +25,7 @@ jobs:
           destination: scan-logs
   danger:
     macos:
-      xcode: 11.6.0
+      xcode: 12.1.0
     working_directory: /Users/distiller/project
     environment:
       DANGER_GITHUB_API_TOKEN: 2b388130450c1a4247582e419e761bfd301f984d
