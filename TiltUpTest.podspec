@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TiltUpTest'
-  s.version          = '2.2.1'
+  s.version          = '2.3.0'
   s.summary          = 'Official Clutter SDK in Swift to access core iOS test helpers.'
 
 # This description is used to generate tags and improve search results.
@@ -31,7 +31,7 @@ TODO: Add long description of the pod here.
   s.pod_target_xcconfig = { 'ENABLE_BITCODE' => 'NO' }
 
   s.frameworks = 'XCTest'
-  s.dependency 'TiltUp'
+  s.dependency 'TiltUp', "= #{s.version}"
 
   s.source       = { :git => "git@github.com:clutter/TiltUp.git", :tag => "#{s.version}" }
 
