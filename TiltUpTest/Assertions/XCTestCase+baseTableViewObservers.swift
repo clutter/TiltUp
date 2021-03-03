@@ -7,7 +7,7 @@
 
 import XCTest
 
-@testable import TiltUp
+import TiltUp
 
 // MARK: - ViewObserver Testing Helpers
 public extension XCTestCase {
