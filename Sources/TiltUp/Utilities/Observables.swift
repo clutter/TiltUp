@@ -5,6 +5,8 @@
 //  Created by Michael Mattson on 9/23/19.
 //
 
+import Foundation
+
 @propertyWrapper
 public final class Observable<Observed> {
     public typealias Observer = (_ oldValue: Observed, _ newValue: Observed) -> Void

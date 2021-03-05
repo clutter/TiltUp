@@ -5,7 +5,7 @@
 //  Created by Robert Manson on 3/4/20.
 //
 
-import Foundation
+import UIKit
 import AVFoundation
 
 public struct PhotoCapture {
