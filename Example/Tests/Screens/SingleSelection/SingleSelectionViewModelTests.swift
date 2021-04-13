@@ -8,7 +8,7 @@
 
 import XCTest
 
-import TiltUp
+@testable import TiltUp
 
 final class SingleSelectionViewModelTests: XCTestCase {
     func testInitializeWithRows() {
@@ -45,6 +45,17 @@ final class SingleSelectionViewModelTests: XCTestCase {
 
         viewModel.preselectRow(at: IndexPath(row: 0, section: 0))
         viewModel.tappedConfirmButton()
+        XCTAssertEqual(confirmedRow, .row1)
+    }
+
+    func testSelectWithoutConfirmation() {
+        let viewModel = SingleSelectionViewModel<TestRow>(rows: [.row1, .row2], navTitle: "Test", requireConfirmation: false)
+
+        var confirmedRow: TestRow?
+        viewModel.coordinatorObservers.tappedConfirm = { confirmedRow = $0 }
+
+        viewModel.selectedRow(at: IndexPath(row: 0, section: 0))
+
         XCTAssertEqual(confirmedRow, .row1)
     }
 
