@@ -30,6 +30,7 @@ public enum SingleSelection {
     final class ViewObservers {
         var navTitle: ((String) -> Void)?
         var confirmButtonEnabled: ((Bool) -> Void)?
+        var confirmButtonVisible: ((Bool) -> Void)?
         var confirmButtonTitle: ((String) -> Void)?
         var toolbarHidden: ((_ hidden: Bool, _ animated: Bool) -> Void)?
         var toolbarButtonTitle: ((String?) -> Void)?
@@ -61,6 +62,7 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
     private var sections: [Section]
     private let hasSections: Bool
     private let navTitle: String
+    private let requireConfirmation: Bool
     private let toolbarButtonTitle: String?
     private let toolbarHidden: Bool
 
@@ -68,6 +70,7 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
 
     public init(rows: [Value],
                 navTitle: String,
+                requireConfirmation: Bool = true,
                 toolbarButtonTitle: String? = nil) {
 
         self.sections = [
@@ -76,12 +79,14 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
         self.hasSections = false
 
         self.navTitle = navTitle
+        self.requireConfirmation = requireConfirmation
         self.toolbarHidden = toolbarButtonTitle == nil
         self.toolbarButtonTitle = toolbarButtonTitle
     }
 
     public init(sections: [(title: String?, rows: [Value])],
                 navTitle: String,
+                requireConfirmation: Bool = true,
                 toolbarButtonTitle: String? = nil) {
 
         self.sections = sections.map { section in
@@ -90,14 +95,21 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
         self.hasSections = true
 
         self.navTitle = navTitle
+        self.requireConfirmation = requireConfirmation
         self.toolbarHidden = toolbarButtonTitle == nil
         self.toolbarButtonTitle = toolbarButtonTitle
     }
 
     public func start() {
         viewObservers.navTitle?(navTitle)
-        viewObservers.confirmButtonEnabled?(selectedIndexPath != nil)
-        viewObservers.confirmButtonTitle?(confirmButtonTitle)
+        if requireConfirmation {
+            viewObservers.confirmButtonEnabled?(selectedIndexPath != nil)
+            viewObservers.confirmButtonTitle?(confirmButtonTitle)
+            viewObservers.confirmButtonVisible?(true)
+        } else {
+            viewObservers.confirmButtonVisible?(false)
+        }
+
         viewObservers.toolbarButtonTitle?(toolbarButtonTitle)
 
         updateToolbarHidden(animated: false)
@@ -144,6 +156,8 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
     // MARK: - Actions
 
     private func updateSelection(to indexPath: IndexPath) {
+        guard requireConfirmation else { return }
+
         for (sectionIndex, section) in sections.enumerated() {
             for (rowIndex, row) in section.rows.enumerated() where row.isSelected {
                 sections[sectionIndex].rows[rowIndex].isSelected = false
@@ -161,11 +175,11 @@ public final class SingleSelectionViewModel<Value: SingleSelectionableRow> {
         updateSelection(to: indexPath)
     }
 
-    func selectedRow(at indexPath: IndexPath) {
+    public func selectedRow(at indexPath: IndexPath) {
         updateSelection(to: indexPath)
 
         let value = sections[indexPath.section].rows[indexPath.row].value
-        if value.singleSelectionableRow.hasNextStep {
+        if value.singleSelectionableRow.hasNextStep || !requireConfirmation {
             coordinatorObservers.tappedConfirm?(value)
         }
     }

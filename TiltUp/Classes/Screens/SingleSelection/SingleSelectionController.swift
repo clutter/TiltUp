@@ -32,7 +32,7 @@ public final class SingleSelectionController<Value: SingleSelectionableRow>: UIT
             navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(tappedCancelButton))
         }
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: viewModel.confirmButtonTitle, style: .plain, target: self, action: #selector(self.tappedConfirmButton))
+        addConfirmButton()
 
         viewModel.viewObservers.navTitle = { [weak self] title in
             self?.navigationItem.title = title
@@ -40,6 +40,15 @@ public final class SingleSelectionController<Value: SingleSelectionableRow>: UIT
 
         viewModel.viewObservers.confirmButtonEnabled = { [weak self] enabled in
             self?.navigationItem.rightBarButtonItem?.isEnabled = enabled
+        }
+
+        viewModel.viewObservers.confirmButtonVisible = { [weak self] visible in
+            if visible {
+                guard self?.navigationItem.rightBarButtonItem == nil else { return }
+                self?.addConfirmButton()
+            } else {
+                self?.navigationItem.rightBarButtonItem = nil
+            }
         }
 
         viewModel.viewObservers.confirmButtonTitle = { [weak self] title in
@@ -131,5 +140,9 @@ private extension SingleSelectionController {
         } else {
             cell.accessoryType = row.isSelected ? .checkmark : .none
         }
+    }
+
+    func addConfirmButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: viewModel.confirmButtonTitle, style: .plain, target: self, action: #selector(self.tappedConfirmButton))
     }
 }
