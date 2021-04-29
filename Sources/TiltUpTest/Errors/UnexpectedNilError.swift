@@ -6,6 +6,8 @@
 //  Copyright © 2019 Clutter. All rights reserved.
 //
 
+import Foundation
+
 public struct UnexpectedNilError: Error {
     public let expectedType: Any.Type
     public let file: StaticString
