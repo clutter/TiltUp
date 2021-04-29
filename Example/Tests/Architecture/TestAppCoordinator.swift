@@ -50,31 +50,34 @@ extension XCTestCase {
     func assertRetained<T: UIViewController>(_ coordinator: Coordinating, withTopViewControllerOfType type: T.Type, message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
 
         guard let vc = coordinator.router.navigationController.topViewController else {
-            recordFailure(
-                withDescription: "assertRetained(_:withTopViewControllerOfType:) failed: topViewController is nil - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertRetained(_:withTopViewControllerOfType:) failed: topViewController is nil - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
 
         guard coordinator.appCoordinator.containsCoordinator(coordinator) else {
-            recordFailure(
-                withDescription: "assertRetained(_:withTopViewControllerOfType:) failed: (\"\(coordinator)\") is not retained by app coordinator - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertRetained(_:withTopViewControllerOfType:) failed: (\"\(coordinator)\") is not retained by app coordinator - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
 
         guard vc is T else {
-            recordFailure(
-                withDescription: "assertRetained(_:withTopViewControllerOfType:) failed: (\"\(vc)\") is not of type (\"\(T.self)\") - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertRetained(_:withTopViewControllerOfType:) failed: (\"\(vc)\") is not of type (\"\(T.self)\") - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
