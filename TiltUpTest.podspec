@@ -35,5 +35,5 @@ TODO: Add long description of the pod here.
 
   s.source       = { :git => "git@github.com:clutter/TiltUp.git", :tag => "#{s.version}" }
 
-  s.source_files  = 'TiltUpTest/**/*'
+  s.source_files  = 'Sources/TiltUpTest/**/*'
 end

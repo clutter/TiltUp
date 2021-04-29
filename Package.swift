@@ -11,13 +11,25 @@ let package = Package(
     products: [
         .library(
             name: "TiltUp",
-            targets: ["TiltUp"])
+            targets: ["TiltUp"]
+        ),
+        .library(
+            name: "TiltUpTest",
+            targets: ["TiltUpTest"]
+        )
     ],
     dependencies: [
     ],
     targets: [
         .target(
             name: "TiltUp",
-            dependencies: [])
+            dependencies: []
+        ),
+        .target(
+            name: "TiltUpTest",
+            dependencies: [
+                "TiltUp"
+            ]
+        )
     ]
 )
