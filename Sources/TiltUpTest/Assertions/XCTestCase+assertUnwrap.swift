@@ -9,29 +9,33 @@
 import XCTest
 
 public extension XCTestCase {
-    func assertUnwrap<T>(_ expression: @autoclosure () throws -> T?,
-                         message: @autoclosure () -> String = "",
-                         file: StaticString = #file,
-                         line: UInt = #line) throws -> T {
+    func assertUnwrap<T>(
+        _ expression: @autoclosure () throws -> T?,
+        message: @autoclosure () -> String = "",
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> T {
         let value: T?
         do {
             value = try expression()
         } catch {
-            recordFailure(
-                withDescription: #"assertUnwrap failed: threw error "\#(error)" - \#(message())"#,
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: false
+            record(
+                .make(
+                    #"assertUnwrap failed: threw error "\#(error)" - \#(message())"#,
+                    inFile: file,
+                    atLine: line
+                )
             )
             throw error
         }
 
         guard let unwrapped = value else {
-            recordFailure(
-                withDescription: "assertUnwrap failed: found nil instead of a value of type \(T.self) - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertUnwrap failed: found nil instead of a value of type \(T.self) - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             throw UnexpectedNilError(expectedType: T.self, file: file, line: line)
         }

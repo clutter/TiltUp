@@ -17,31 +17,34 @@ public extension XCTestCase {
         do {
             value = try expression()
         } catch {
-            recordFailure(
-                withDescription: #"assertTrue failed: threw error "\#(error)" - \#(message())"#,
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: false
+            record(
+                .make(
+                    #"assertTrue failed: threw error "\#(error)" - \#(message())"#,
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
 
         guard let unwrapped = value else {
-            recordFailure(
-                withDescription: "assertTrue failed: found nil instead of a value of type \(Bool.self) - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertTrue failed: found nil instead of a value of type \(Bool.self) - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
 
         guard unwrapped == true else {
-            recordFailure(
-                withDescription: "assertTrue failed - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertTrue failed - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
@@ -55,31 +58,34 @@ public extension XCTestCase {
         do {
             value = try expression()
         } catch {
-            recordFailure(
-                withDescription: #"assertFalse failed: threw error "\#(error)" - \#(message())"#,
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: false
+            record(
+                .make(
+                    #"assertFalse failed: threw error "\#(error)" - \#(message())"#,
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
 
         guard let unwrapped = value else {
-            recordFailure(
-                withDescription: "assertFalse failed: found nil instead of a value of type \(Bool.self) - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertFalse failed: found nil instead of a value of type \(Bool.self) - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
 
         guard unwrapped == false else {
-            recordFailure(
-                withDescription: "assertFalse failed - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertFalse failed - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             return
         }
