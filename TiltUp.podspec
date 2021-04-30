@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TiltUp'
-  s.version          = '2.4.0'
+  s.version          = '2.5.0'
   s.summary          = 'Official Clutter SDK in Swift to access core iOS features.'
 
 # This description is used to generate tags and improve search results.
@@ -30,5 +30,5 @@ TODO: Add long description of the pod here.
 
   s.source       = { :git => "git@github.com:clutter/TiltUp.git", :tag => "#{s.version}" }
 
-  s.source_files  = 'TiltUp/Classes/**/*'
+  s.source_files  = 'Sources/TiltUp/**/*'
 end

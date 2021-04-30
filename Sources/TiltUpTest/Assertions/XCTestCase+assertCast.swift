@@ -18,31 +18,34 @@ public extension XCTestCase {
         do {
             value = try expression()
         } catch {
-            recordFailure(
-                withDescription: #"assertCast(_:as:) failed: threw error "\#(error)" - \#(message())"#,
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: false
+            record(
+                .make(
+                    #"assertCast(_:as:) failed: threw error "\#(error)" - \#(message())"#,
+                    inFile: file,
+                    atLine: line
+                )
             )
             throw error
         }
 
         guard let unwrapped = value else {
-            recordFailure(
-                withDescription: "assertCast(_:as:) failed: found nil instead of a value of type \(T.self) - \(message())",
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    "assertCast(_:as:) failed: found nil instead of a value of type \(T.self) - \(message())",
+                    inFile: file,
+                    atLine: line
+                )
             )
             throw UnexpectedNilError(expectedType: T.self, file: file, line: line)
         }
 
         guard let cast = unwrapped as? T else {
-            recordFailure(
-                withDescription: #"assertCast(_:as:) failed: ("\#(unwrapped)") is not of type ("\#(T.self)") - \#(message())"#,
-                inFile: String(describing: file),
-                atLine: Int(line),
-                expected: true
+            record(
+                .make(
+                    #"assertCast(_:as:) failed: ("\#(unwrapped)") is not of type ("\#(T.self)") - \#(message())"#,
+                    inFile: file,
+                    atLine: line
+                )
             )
             throw UnexpectedNilError(expectedType: T.self, file: file, line: line)
         }
