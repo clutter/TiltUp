@@ -110,14 +110,22 @@ final class CameraOverlayView: UIView {
         button.setImage(UIImage(named: "flash_on"), for: .selected)
         button.alpha = 0.9
         button.addTarget(self, action: #selector(toggleFlashMode), for: .touchUpInside)
-        addSubview(button)
+        controlPanelView.addSubview(button)
 
         button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             button.widthAnchor.constraint(equalToConstant: 44),
             button.heightAnchor.constraint(equalToConstant: 44),
-            button.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
-            button.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8)
+            button.centerYAnchor.constraint(equalTo: controlPanelView.centerYAnchor),
+            NSLayoutConstraint(
+                item: button,
+                attribute: .centerX,
+                relatedBy: .equal,
+                toItem: shutterButton,
+                attribute: .leading,
+                multiplier: 0.5,
+                constant: 0.0
+            )
         ])
 
         return button
@@ -133,7 +141,7 @@ final class CameraOverlayView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: flashButton.centerYAnchor)
+            label.centerYAnchor.constraint(equalTo: cancelButton.centerYAnchor)
         ])
 
         return label
@@ -141,18 +149,21 @@ final class CameraOverlayView: UIView {
 
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Done", for: .normal)
+        button.setTitle("Finish", for: .normal)
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 18)
         button.isHidden = true
         button.addTarget(self, action: #selector(confirmPictures), for: .touchUpInside)
-        addSubview(button)
+        controlPanelView.addSubview(button)
+
+        let leadingSpace = shutterButton.trailingAnchor.anchorWithOffset(to: button.centerXAnchor)
+        let trailingSpace = button.centerXAnchor.anchorWithOffset(to: controlPanelView.trailingAnchor)
 
         button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             button.heightAnchor.constraint(equalToConstant: 64),
-            button.topAnchor.constraint(equalTo: self.topAnchor),
-            button.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8)
+            button.centerYAnchor.constraint(equalTo: controlPanelView.centerYAnchor),
+            leadingSpace.constraint(equalTo: trailingSpace, multiplier: 1)
         ])
 
         return button
@@ -237,12 +248,12 @@ final class CameraOverlayView: UIView {
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 18)
         button.addTarget(self, action: #selector(cancelCamera), for: .touchUpInside)
-        controlPanelView.addSubview(button)
+        addSubview(button)
 
         button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            button.centerYAnchor.constraint(equalTo: controlPanelView.centerYAnchor),
-            button.leadingAnchor.constraint(equalTo: controlPanelView.leadingAnchor, constant: 8)
+            button.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
+            button.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16)
         ])
 
         return button
