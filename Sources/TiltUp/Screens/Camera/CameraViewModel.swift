@@ -299,10 +299,20 @@ private extension CameraViewModel {
         resetFocus()
 
         if let photoCapture = photoCaptureDelegate.photoCapture {
+            var remainingPhotoType: CameraOverlayView.RemainingPhotoType = .none
+            let photoCountIncludingCurrentPhoto = photos.count + 1
+            if photoCountIncludingCurrentPhoto < settings.numberOfPhotos.upperBound {
+                if photoCountIncludingCurrentPhoto >= settings.numberOfPhotos.lowerBound {
+                    remainingPhotoType = .optional
+                } else {
+                    remainingPhotoType = .required
+                }
+            }
+
             viewObservers.updateOverlayState?(
                 .confirm(
                     photoCapture: photoCapture,
-                    canContinue: photos.count + 2 <= settings.numberOfPhotos.upperBound
+                    remainingPhotoType: remainingPhotoType
                 )
             )
         }
@@ -455,10 +465,10 @@ extension CameraViewModel: CameraOverlayViewDelegate {
         viewObservers.updateOverlayState?(.start(count: photos.count, canComplete: photos.count >= settings.numberOfPhotos.lowerBound))
     }
 
-    func usePicture(_ photoCapture: PhotoCapture, canContinue: Bool) {
+    func usePicture(_ photoCapture: PhotoCapture, continueCapturing: Bool) {
         photos.append(photoCapture)
 
-        if canContinue {
+        if continueCapturing {
             viewObservers.updateOverlayState?(.start(count: photos.count, canComplete: photos.count >= settings.numberOfPhotos.lowerBound))
         } else {
             coordinatorObservers.capturedPhotos?(photos)

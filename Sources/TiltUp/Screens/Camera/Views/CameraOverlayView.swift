@@ -14,7 +14,7 @@ protocol CameraOverlayViewDelegate: AnyObject {
     func confirmPictures()
     func takePicture()
     func retakePicture()
-    func usePicture(_ photoCapture: PhotoCapture, canContinue: Bool)
+    func usePicture(_ photoCapture: PhotoCapture, continueCapturing: Bool)
     func cancelCamera()
 }
 
@@ -39,10 +39,29 @@ final class ShutterButton: UIButton {
 final class CameraOverlayView: UIView {
     weak var delegate: CameraOverlayViewDelegate?
 
+    /// Enum describing what photos still need to be captured this session
+    enum RemainingPhotoType {
+        /// No more photos are allowed to be captured this session
+        case none
+        /// There is at least one more required photo to be captured this session
+        case required
+        /// There are optional photos to be captured this session
+        case optional
+    }
+
+    /// Current state of the camera
     enum State {
+        /// The camera is ready to capture a photo, shutter button is visible as well as flash button
+        /// - count: Number of photos that have been captured, is displayed on the overlay
+        /// - canComplete: Bool indicating whether enough photos have been taken or not. When `true` the
+        ///     finish button is visible
         case start(count: Int, canComplete: Bool)
+        /// The camera is in the process of capturing a photo. The UI elements are hidden
         case capture
-        case confirm(photoCapture: PhotoCapture, canContinue: Bool)
+        /// The review stage for a photo that was taken, allows the user to accept the photo or retake it
+        /// - photoCapture: The PhotoCapture object that represents the photo
+        /// - remainingPhotoType: What type of photos still need to be captured this session, if any
+        case confirm(photoCapture: PhotoCapture, remainingPhotoType: RemainingPhotoType)
     }
 
     private var hint: (_ numberOfPhotos: Int) -> String?
@@ -54,11 +73,10 @@ final class CameraOverlayView: UIView {
                 cancelButton.isHidden = false
                 countLabel.isHidden = count == 0
                 countLabel.text = "\(count)"
-                doneButton.isHidden = !canComplete
+                finishControlPanelButton.isHidden = !canComplete
                 flashButton.isHidden = false
                 previewImageView.image = nil
-                retakeButton.isHidden = true
-                saveButton.isHidden = true
+                reviewButtonStack.isHidden = true
                 shutterButton.isHidden = false
 
                 hintLabel.text = hint(count)
@@ -66,21 +84,33 @@ final class CameraOverlayView: UIView {
             case .capture:
                 cancelButton.isHidden = true
                 countLabel.isHidden = true
-                doneButton.isHidden = true
+                finishControlPanelButton.isHidden = true
                 flashButton.isHidden = true
-                retakeButton.isHidden = true
-                saveButton.isHidden = true
+                reviewButtonStack.isHidden = true
                 shutterButton.isHidden = true
 
-            case let .confirm(photoCapture, canContinue):
+            case let .confirm(photoCapture, remainingPhotoType):
                 cancelButton.isHidden = true
                 countLabel.isHidden = true
-                doneButton.isHidden = true
+                finishControlPanelButton.isHidden = true
                 flashButton.isHidden = true
                 previewImageView.image = UIImage(data: photoCapture.fileDataRepresentation)
-                retakeButton.isHidden = false
-                saveButton.setTitle(canContinue ? "Continue" : "Use Photo", for: .normal)
-                saveButton.isHidden = false
+
+                UIView.performWithoutAnimation {
+                    switch remainingPhotoType {
+                    case .none:
+                        saveAndContinueButton.setTitle("Finish", for: .normal)
+                        finishReviewButton.isHidden = true
+                    case .required:
+                        saveAndContinueButton.setTitle("Next Photo", for: .normal)
+                        finishReviewButton.isHidden = true
+                    case .optional:
+                        saveAndContinueButton.setTitle("Take More Photos", for: .normal)
+                        finishReviewButton.isHidden = false
+                    }
+                    saveAndContinueButton.layoutIfNeeded()
+                }
+                reviewButtonStack.isHidden = false
                 shutterButton.isHidden = true
             }
 
@@ -147,7 +177,7 @@ final class CameraOverlayView: UIView {
         return label
     }()
 
-    private lazy var doneButton: UIButton = {
+    private lazy var finishControlPanelButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Finish", for: .normal)
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
@@ -165,6 +195,47 @@ final class CameraOverlayView: UIView {
             button.centerYAnchor.constraint(equalTo: controlPanelView.centerYAnchor),
             leadingSpace.constraint(equalTo: trailingSpace, multiplier: 1)
         ])
+
+        return button
+    }()
+
+    private lazy var reviewButtonStack: UIStackView = {
+        let innerStackView = UIStackView(arrangedSubviews: [
+            retakeButton,
+            saveAndContinueButton
+        ])
+        innerStackView.axis = .horizontal
+        innerStackView.alignment = .center
+        innerStackView.distribution = .fillEqually
+
+        let outerStackView = UIStackView(arrangedSubviews: [
+            innerStackView,
+            finishReviewButton
+        ])
+
+        outerStackView.axis = .vertical
+        outerStackView.alignment = .fill
+        outerStackView.spacing = 16
+        outerStackView.isHidden = true
+
+        addSubview(outerStackView)
+        outerStackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            outerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8.0),
+            outerStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8.0),
+            outerStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
+        ])
+
+        return outerStackView
+    }()
+
+    private lazy var finishReviewButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Finish", for: .normal)
+        button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 18)
+        button.isHidden = true
+        button.addTarget(self, action: #selector(usePictureAndEndCapture), for: .touchUpInside)
 
         return button
     }()
@@ -264,35 +335,18 @@ final class CameraOverlayView: UIView {
         button.setTitle("Retake", for: .normal)
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 18)
-        button.isHidden = true
         button.addTarget(self, action: #selector(retakePicture), for: .touchUpInside)
-
-        controlPanelView.addSubview(button)
-        button.translatesAutoresizingMaskIntoConstraints = false
-
-        button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            button.centerYAnchor.constraint(equalTo: controlPanelView.centerYAnchor),
-            button.leadingAnchor.constraint(equalTo: controlPanelView.leadingAnchor, constant: 8)
-        ])
 
         return button
     }()
 
-    private lazy var saveButton: UIButton = {
+    private lazy var saveAndContinueButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Use Photo", for: .normal)
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 18)
-        button.isHidden = true
-        button.addTarget(self, action: #selector(usePicture), for: .touchUpInside)
-        controlPanelView.addSubview(button)
 
-        button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            button.centerYAnchor.constraint(equalTo: controlPanelView.centerYAnchor),
-            button.trailingAnchor.constraint(equalTo: controlPanelView.trailingAnchor, constant: -8)
-        ])
+        button.addTarget(self, action: #selector(usePictureAndCaptureMoreIfPossible), for: .touchUpInside)
 
         return button
     }()
@@ -329,13 +383,12 @@ extension CameraOverlayView {
         backgroundColor = .clear
 
         _ = flashButton
-        _ = doneButton
+        _ = finishControlPanelButton
         _ = previewImageView
         _ = controlPanelView
         _ = cancelButton
-        _ = retakeButton
         _ = shutterButton
-        _ = saveButton
+        _ = reviewButtonStack
     }
 
     private func animateRotation(to orientation: AVCaptureVideoOrientation) {
@@ -362,10 +415,10 @@ extension CameraOverlayView {
         hintLabel.superview?.transform = transform
         hintLabel.superview?.frame = hintSuperviewFrame
         flashButton.transform = transform
-        doneButton.transform = transform
+        finishControlPanelButton.transform = transform
         cancelButton.transform = transform
         retakeButton.transform = transform
-        saveButton.transform = transform
+        saveAndContinueButton.transform = transform
     }
 }
 
@@ -387,9 +440,24 @@ private extension CameraOverlayView {
         delegate?.retakePicture()
     }
 
-    @objc func usePicture() {
-        guard case let .confirm(image, canContinue) = state else { return }
-        delegate?.usePicture(image, canContinue: canContinue)
+    @objc func usePictureAndCaptureMoreIfPossible() {
+        guard case let .confirm(image, remainingPhotoType) = state else { return }
+        switch remainingPhotoType {
+        case .none:
+            delegate?.usePicture(image, continueCapturing: false)
+        case .required, .optional:
+            delegate?.usePicture(image, continueCapturing: true)
+        }
+    }
+
+    @objc func usePictureAndEndCapture() {
+        guard case let .confirm(image, remainingPhotoType) = state else { return }
+        switch remainingPhotoType {
+        case .none, .optional:
+            delegate?.usePicture(image, continueCapturing: false)
+        case .required:
+            return
+        }
     }
 
     @objc func cancelCamera() {
