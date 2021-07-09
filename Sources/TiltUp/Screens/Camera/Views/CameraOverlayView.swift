@@ -100,12 +100,15 @@ final class CameraOverlayView: UIView {
                     switch remainingPhotoType {
                     case .none:
                         saveAndContinueButton.setTitle("Finish", for: .normal)
+                        self.styleButton(saveAndContinueButton, outline: false, color: Self.tealColor)
                         finishReviewButton.isHidden = true
                     case .required:
                         saveAndContinueButton.setTitle("Next Photo", for: .normal)
+                        self.styleButton(saveAndContinueButton, outline: true, color: Self.tealColor)
                         finishReviewButton.isHidden = true
                     case .optional:
-                        saveAndContinueButton.setTitle("Take More Photos", for: .normal)
+                        saveAndContinueButton.setTitle("Take More", for: .normal)
+                        self.styleButton(saveAndContinueButton, outline: true, color: Self.tealColor)
                         finishReviewButton.isHidden = false
                     }
                     saveAndContinueButton.layoutIfNeeded()
@@ -114,8 +117,14 @@ final class CameraOverlayView: UIView {
                 shutterButton.isHidden = true
             }
 
-            UIView.animate(withDuration: 0.3) {
-                self.animateRotation(to: self.interfaceOrientation)
+            if case .start = state {
+                UIView.animate(withDuration: 0.3) {
+                    self.animateRotation(to: self.interfaceOrientation)
+                }
+            } else {
+                UIView.performWithoutAnimation {
+                    self.animateRotation(to: self.interfaceOrientation)
+                }
             }
         }
     }
@@ -207,6 +216,7 @@ final class CameraOverlayView: UIView {
         innerStackView.axis = .horizontal
         innerStackView.alignment = .center
         innerStackView.distribution = .fillEqually
+        innerStackView.spacing = 16.0
 
         let outerStackView = UIStackView(arrangedSubviews: [
             innerStackView,
@@ -221,9 +231,9 @@ final class CameraOverlayView: UIView {
         addSubview(outerStackView)
         outerStackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            outerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8.0),
-            outerStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8.0),
-            outerStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
+            outerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
+            outerStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16.0),
+            outerStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16.0)
         ])
 
         return outerStackView
@@ -236,6 +246,13 @@ final class CameraOverlayView: UIView {
         button.titleLabel?.font = .systemFont(ofSize: 18)
         button.isHidden = true
         button.addTarget(self, action: #selector(usePictureAndEndCapture), for: .touchUpInside)
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0)
+        ])
+
+        self.styleButton(button, outline: false, color: Self.tealColor)
 
         return button
     }()
@@ -337,6 +354,13 @@ final class CameraOverlayView: UIView {
         button.titleLabel?.font = .systemFont(ofSize: 18)
         button.addTarget(self, action: #selector(retakePicture), for: .touchUpInside)
 
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0)
+        ])
+
+        self.styleButton(button, outline: true, color: Self.warnLightColor)
+
         return button
     }()
 
@@ -347,6 +371,13 @@ final class CameraOverlayView: UIView {
         button.titleLabel?.font = .systemFont(ofSize: 18)
 
         button.addTarget(self, action: #selector(usePictureAndCaptureMoreIfPossible), for: .touchUpInside)
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0)
+        ])
+
+        self.styleButton(button, outline: true, color: Self.tealColor)
 
         return button
     }()
@@ -394,20 +425,26 @@ extension CameraOverlayView {
     private func animateRotation(to orientation: AVCaptureVideoOrientation) {
         let transform: CGAffineTransform
         let hintSuperviewFrame: CGRect
+        let atTop: Bool
+        if case .confirm = state {
+            atTop = true
+        } else {
+            atTop = false
+        }
 
         switch orientation {
         case .portrait:
             transform = .identity
-            hintSuperviewFrame = CGRect(x: 0, y: 64 + frame.width * 4 / 3 - 100, width: frame.width, height: 100)
+            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 64 + frame.width * 4 / 3 - 100, width: frame.width, height: 100)
         case .portraitUpsideDown:
             transform = CGAffineTransform.identity.rotated(by: 180 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: 0, y: 64, width: frame.width, height: 100)
+            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 64, width: frame.width, height: 100)
         case .landscapeRight:
             transform = CGAffineTransform.identity.rotated(by: 90 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: 0, y: 64, width: 75, height: frame.width * 4 / 3)
+            hintSuperviewFrame = CGRect(x: frame.width - 75, y: 64, width: 75, height: frame.width * 4 / 3)
         case .landscapeLeft:
             transform = CGAffineTransform.identity.rotated(by: -90 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: frame.width - 75, y: 64, width: 75, height: frame.width * 4 / 3)
+            hintSuperviewFrame = CGRect(x: 0, y: 64, width: 75, height: frame.width * 4 / 3)
         @unknown default:
             return
         }
@@ -420,6 +457,28 @@ extension CameraOverlayView {
         retakeButton.transform = transform
         saveAndContinueButton.transform = transform
     }
+
+    private static func styleButton(_ button: UIButton, outline: Bool, color: UIColor) {
+        button.backgroundColor = outline ? .white : color
+        button.setTitleColor(outline ? color : .white, for: .normal)
+        button.layer.borderColor = outline ? color.cgColor : UIColor.white.cgColor
+
+        button.layer.borderWidth = outline ? 1.0 : 0.0
+        button.layer.cornerRadius = 8.0
+        button.clipsToBounds = false
+
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17.0, weight: UIFont.Weight.semibold)
+
+        button.titleEdgeInsets = UIEdgeInsets(
+            top: 0.0,
+            left: 16.0,
+            bottom: 0.0,
+            right: 16.0
+        )
+    }
+
+    private static let tealColor = UIColor(red: 0.0, green: 0.631, blue: 0.604, alpha: 1.0)
+    private static let warnLightColor = UIColor(red: 0.820, green: 0.588, blue: 0.082, alpha: 1.0)
 }
 
 private extension CameraOverlayView {
