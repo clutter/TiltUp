@@ -78,6 +78,9 @@ final class CameraOverlayView: UIView {
                 previewImageView.image = nil
                 reviewButtonStack.isHidden = true
                 shutterButton.isHidden = false
+                landscapeFinishReviewButton.isHidden = true
+                landscapeRetakeButton.isHidden = true
+                landscapeSaveAndContinueButton.isHidden = true
 
                 hintLabel.text = hint(count)
 
@@ -88,7 +91,9 @@ final class CameraOverlayView: UIView {
                 flashButton.isHidden = true
                 reviewButtonStack.isHidden = true
                 shutterButton.isHidden = true
-
+                landscapeFinishReviewButton.isHidden = true
+                landscapeRetakeButton.isHidden = true
+                landscapeSaveAndContinueButton.isHidden = true
             case let .confirm(photoCapture, remainingPhotoType):
                 cancelButton.isHidden = true
                 countLabel.isHidden = true
@@ -100,16 +105,19 @@ final class CameraOverlayView: UIView {
                     switch remainingPhotoType {
                     case .none:
                         saveAndContinueButton.setTitle("Finish", for: .normal)
-                        self.styleButton(saveAndContinueButton, outline: false, color: Self.tealColor)
+                        Self.styleButton(saveAndContinueButton, outline: false, color: Self.tealColor)
                         finishReviewButton.isHidden = true
+                        landscapeFinishReviewButton.isHidden = true
                     case .required:
                         saveAndContinueButton.setTitle("Next Photo", for: .normal)
-                        self.styleButton(saveAndContinueButton, outline: true, color: Self.tealColor)
+                        Self.styleButton(saveAndContinueButton, outline: true, color: Self.tealColor)
                         finishReviewButton.isHidden = true
+                        landscapeFinishReviewButton.isHidden = true
                     case .optional:
                         saveAndContinueButton.setTitle("Take More", for: .normal)
-                        self.styleButton(saveAndContinueButton, outline: true, color: Self.tealColor)
-                        finishReviewButton.isHidden = false
+                        Self.styleButton(saveAndContinueButton, outline: true, color: Self.tealColor)
+                        finishReviewButton.isHidden = !(interfaceOrientation == .portrait || interfaceOrientation == .portraitUpsideDown)
+                        landscapeFinishReviewButton.isHidden = !(interfaceOrientation == .landscapeLeft || interfaceOrientation == .landscapeRight)
                     }
                     saveAndContinueButton.layoutIfNeeded()
                 }
@@ -229,6 +237,7 @@ final class CameraOverlayView: UIView {
         outerStackView.isHidden = true
 
         addSubview(outerStackView)
+
         outerStackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             outerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
@@ -237,24 +246,6 @@ final class CameraOverlayView: UIView {
         ])
 
         return outerStackView
-    }()
-
-    private lazy var finishReviewButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Finish", for: .normal)
-        button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18)
-        button.isHidden = true
-        button.addTarget(self, action: #selector(usePictureAndEndCapture), for: .touchUpInside)
-
-        button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0)
-        ])
-
-        self.styleButton(button, outline: false, color: Self.tealColor)
-
-        return button
     }()
 
     private lazy var previewImageView: UIImageView = {
@@ -348,39 +339,134 @@ final class CameraOverlayView: UIView {
     }()
 
     private lazy var retakeButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Retake", for: .normal)
-        button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18)
-        button.addTarget(self, action: #selector(retakePicture), for: .touchUpInside)
+        Self.makeRetakeButton(target: self)
+    }()
 
-        button.translatesAutoresizingMaskIntoConstraints = false
+    private lazy var landscapeRetakeButton: UIButton = {
+        let button = Self.makeRetakeButton(target: self)
+        button.isHidden = true
+
+        let halfHeightAnchor = button.centerYAnchor.anchorWithOffset(to: button.bottomAnchor)
+        let leadingToCenterAnchor =  leadingAnchor.anchorWithOffset(to: button.centerXAnchor)
+
+        let halfWidthAnchor = button.leadingAnchor.anchorWithOffset(to: button.centerXAnchor)
+        let centerToTopAnchor = topAnchor.anchorWithOffset(to: button.centerYAnchor)
+
+        addSubview(button)
         NSLayoutConstraint.activate([
-            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0)
+            button.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.4),
+            leadingToCenterAnchor.constraint(equalTo: halfHeightAnchor, constant: 16.0),
+            centerToTopAnchor.constraint(equalTo: halfWidthAnchor, constant: 16.0)
         ])
-
-        self.styleButton(button, outline: true, color: Self.warnLightColor)
 
         return button
     }()
 
     private lazy var saveAndContinueButton: UIButton = {
+        Self.makeSaveAndContinueButton(target: self)
+    }()
+
+    private lazy var landscapeSaveAndContinueButton: UIButton = {
+        let button = Self.makeSaveAndContinueButton(target: self)
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+        button.isHidden = true
+        addSubview(button)
+
+        button.centerXAnchor.anchorWithOffset(to: button.trailingAnchor)
+
+        let halfHeightAnchor = button.centerYAnchor.anchorWithOffset(to: button.bottomAnchor)
+        let leadingToCenterAnchor =  leadingAnchor.anchorWithOffset(to: button.centerXAnchor)
+
+        let halfWidthAnchor = button.centerXAnchor.anchorWithOffset(to: button.trailingAnchor)
+        let centerToBottomAnchor = button.centerYAnchor.anchorWithOffset(to: bottomAnchor)
+
+        NSLayoutConstraint.activate([
+            button.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.4),
+            leadingToCenterAnchor.constraint(equalTo: halfHeightAnchor, constant: 16.0),
+            centerToBottomAnchor.constraint(equalTo: halfWidthAnchor, constant: 16.0)
+        ])
+
+        return button
+    }()
+
+    private lazy var finishReviewButton: UIButton = {
+        Self.makeFinishReviewButton(target: self)
+    }()
+
+    private lazy var landscapeFinishReviewButton: UIButton = {
+        let button = Self.makeFinishReviewButton(target: self)
+        button.isHidden = true
+
+        addSubview(button)
+
+        let halfHeightAnchor = button.centerYAnchor.anchorWithOffset(to: button.bottomAnchor)
+        let centerToTrailingAnchor =  button.centerXAnchor.anchorWithOffset(to: trailingAnchor)
+
+        let halfWidthAnchor = button.centerXAnchor.anchorWithOffset(to: button.trailingAnchor)
+        let centerToBottomAnchor = button.centerYAnchor.anchorWithOffset(to: bottomAnchor)
+
+        NSLayoutConstraint.activate([
+            button.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.4),
+            centerToTrailingAnchor.constraint(equalTo: halfHeightAnchor, constant: 16.0),
+            centerToBottomAnchor.constraint(equalTo: halfWidthAnchor, constant: 16.0)
+        ])
+
+        return button
+    }()
+
+    private static func makeRetakeButton(target: Any?) -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Use Photo", for: .normal)
+        button.setTitle("Retake", for: .normal)
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 18)
-
-        button.addTarget(self, action: #selector(usePictureAndCaptureMoreIfPossible), for: .touchUpInside)
+        button.addTarget(target, action: #selector(retakePicture), for: .touchUpInside)
 
         button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0)
         ])
 
-        self.styleButton(button, outline: true, color: Self.tealColor)
+        styleButton(button, outline: true, color: Self.warnLightColor)
 
         return button
-    }()
+    }
+
+    private static func makeSaveAndContinueButton(target: Any?) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle("Use Photo", for: .normal)
+        button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 18)
+
+        button.addTarget(target, action: #selector(usePictureAndCaptureMoreIfPossible), for: .touchUpInside)
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0)
+        ])
+
+        styleButton(button, outline: true, color: Self.tealColor)
+
+        return button
+    }
+
+    private static func makeFinishReviewButton(target: Any?) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle("Finish", for: .normal)
+        button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 18)
+        button.isHidden = true
+        button.addTarget(target, action: #selector(usePictureAndEndCapture), for: .touchUpInside)
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0)
+        ])
+
+        styleButton(button, outline: false, color: Self.tealColor)
+
+        return button
+    }
 
     required init(hint: @escaping (_ numberOfPhotos: Int) -> String?) {
         self.hint = hint
@@ -432,19 +518,41 @@ extension CameraOverlayView {
             atTop = false
         }
 
+        let reviewButtonsHidden: Bool
+        if case State.confirm = state {
+            reviewButtonsHidden = false
+        } else {
+            reviewButtonsHidden = true
+        }
+
         switch orientation {
         case .portrait:
             transform = .identity
             hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 64 + frame.width * 4 / 3 - 100, width: frame.width, height: 100)
+
+            reviewButtonStack.isHidden = reviewButtonsHidden
+            landscapeFinishReviewButton.isHidden = true
+            landscapeRetakeButton.isHidden = true
+            landscapeSaveAndContinueButton.isHidden = true
         case .portraitUpsideDown:
             transform = CGAffineTransform.identity.rotated(by: 180 * .pi / 180)
             hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 64, width: frame.width, height: 100)
+            reviewButtonStack.isHidden = reviewButtonsHidden
+            landscapeFinishReviewButton.isHidden = true
+            landscapeRetakeButton.isHidden = true
+            landscapeSaveAndContinueButton.isHidden = true
         case .landscapeRight:
             transform = CGAffineTransform.identity.rotated(by: 90 * .pi / 180)
             hintSuperviewFrame = CGRect(x: frame.width - 75, y: 64, width: 75, height: frame.width * 4 / 3)
+            reviewButtonStack.isHidden = true
+            landscapeRetakeButton.isHidden = reviewButtonsHidden
+            landscapeSaveAndContinueButton.isHidden = reviewButtonsHidden
         case .landscapeLeft:
             transform = CGAffineTransform.identity.rotated(by: -90 * .pi / 180)
             hintSuperviewFrame = CGRect(x: 0, y: 64, width: 75, height: frame.width * 4 / 3)
+            reviewButtonStack.isHidden = true
+            landscapeRetakeButton.isHidden = reviewButtonsHidden
+            landscapeSaveAndContinueButton.isHidden = reviewButtonsHidden
         @unknown default:
             return
         }
@@ -454,8 +562,12 @@ extension CameraOverlayView {
         flashButton.transform = transform
         finishControlPanelButton.transform = transform
         cancelButton.transform = transform
+        finishReviewButton.transform = transform
         retakeButton.transform = transform
         saveAndContinueButton.transform = transform
+        landscapeFinishReviewButton.transform = transform
+        landscapeRetakeButton.transform = transform
+        landscapeSaveAndContinueButton.transform = transform
     }
 
     private static func styleButton(_ button: UIButton, outline: Bool, color: UIColor) {
