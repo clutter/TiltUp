@@ -73,31 +73,31 @@ final class CameraOverlayView: UIView {
                 cancelButton.isHidden = false
                 countLabel.isHidden = count == 0
                 countLabel.text = "\(count)"
-                finishControlPanelButton.isHidden = !canComplete
+                controlPanelFinishButton.isHidden = !canComplete
                 flashButton.isHidden = false
                 previewImageView.image = nil
                 reviewButtonStack.isHidden = true
                 shutterButton.isHidden = false
-                landscapeFinishReviewButton.isHidden = true
+                landscapeSaveAndEndCaptureButton.isHidden = true
                 landscapeRetakeButton.isHidden = true
-                landscapeSaveAndContinueButton.isHidden = true
+                landscapeSaveAndCaptureMoreButton.isHidden = true
 
                 hintLabel.text = hint(count)
 
             case .capture:
                 cancelButton.isHidden = true
                 countLabel.isHidden = true
-                finishControlPanelButton.isHidden = true
+                controlPanelFinishButton.isHidden = true
                 flashButton.isHidden = true
                 reviewButtonStack.isHidden = true
                 shutterButton.isHidden = true
-                landscapeFinishReviewButton.isHidden = true
+                landscapeSaveAndEndCaptureButton.isHidden = true
                 landscapeRetakeButton.isHidden = true
-                landscapeSaveAndContinueButton.isHidden = true
+                landscapeSaveAndCaptureMoreButton.isHidden = true
             case let .confirm(photoCapture, remainingPhotoType):
                 cancelButton.isHidden = true
                 countLabel.isHidden = true
-                finishControlPanelButton.isHidden = true
+                controlPanelFinishButton.isHidden = true
                 flashButton.isHidden = true
 
                 let image = UIImage(data: photoCapture.fileDataRepresentation)
@@ -113,22 +113,22 @@ final class CameraOverlayView: UIView {
                 UIView.performWithoutAnimation {
                     switch remainingPhotoType {
                     case .none:
-                        saveAndContinueButton.setTitle("Finish", for: .normal)
-                        Self.styleButton(saveAndContinueButton, outline: false, color: Self.tealColor)
-                        finishReviewButton.isHidden = true
-                        landscapeFinishReviewButton.isHidden = true
+                        saveAndCaptureMoreButton.setTitle("Finish", for: .normal)
+                        Self.styleButton(saveAndCaptureMoreButton, outline: false, color: Self.tealColor)
+                        saveAndEndCaptureButton.isHidden = true
+                        landscapeSaveAndEndCaptureButton.isHidden = true
                     case .required:
-                        saveAndContinueButton.setTitle("Next Photo", for: .normal)
-                        Self.styleButton(saveAndContinueButton, outline: true, color: Self.tealColor)
-                        finishReviewButton.isHidden = true
-                        landscapeFinishReviewButton.isHidden = true
+                        saveAndCaptureMoreButton.setTitle("Next Photo", for: .normal)
+                        Self.styleButton(saveAndCaptureMoreButton, outline: true, color: Self.tealColor)
+                        saveAndEndCaptureButton.isHidden = true
+                        landscapeSaveAndEndCaptureButton.isHidden = true
                     case .optional:
-                        saveAndContinueButton.setTitle("Take More", for: .normal)
-                        Self.styleButton(saveAndContinueButton, outline: true, color: Self.tealColor)
-                        finishReviewButton.isHidden = !(interfaceOrientation == .portrait || interfaceOrientation == .portraitUpsideDown)
-                        landscapeFinishReviewButton.isHidden = !(interfaceOrientation == .landscapeLeft || interfaceOrientation == .landscapeRight)
+                        saveAndCaptureMoreButton.setTitle("Take More", for: .normal)
+                        Self.styleButton(saveAndCaptureMoreButton, outline: true, color: Self.tealColor)
+                        saveAndEndCaptureButton.isHidden = !(interfaceOrientation == .portrait || interfaceOrientation == .portraitUpsideDown)
+                        landscapeSaveAndEndCaptureButton.isHidden = !(interfaceOrientation == .landscapeLeft || interfaceOrientation == .landscapeRight)
                     }
-                    saveAndContinueButton.layoutIfNeeded()
+                    saveAndCaptureMoreButton.layoutIfNeeded()
                 }
                 reviewButtonStack.isHidden = false
                 shutterButton.isHidden = true
@@ -203,7 +203,7 @@ final class CameraOverlayView: UIView {
         return label
     }()
 
-    private lazy var finishControlPanelButton: UIButton = {
+    private lazy var controlPanelFinishButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Finish", for: .normal)
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
@@ -228,7 +228,7 @@ final class CameraOverlayView: UIView {
     private lazy var reviewButtonStack: UIStackView = {
         let innerStackView = UIStackView(arrangedSubviews: [
             retakeButton,
-            saveAndContinueButton
+            saveAndCaptureMoreButton
         ])
         innerStackView.axis = .horizontal
         innerStackView.alignment = .center
@@ -237,7 +237,7 @@ final class CameraOverlayView: UIView {
 
         let outerStackView = UIStackView(arrangedSubviews: [
             innerStackView,
-            finishReviewButton
+            saveAndEndCaptureButton
         ])
 
         outerStackView.axis = .vertical
@@ -371,12 +371,12 @@ final class CameraOverlayView: UIView {
         return button
     }()
 
-    private lazy var saveAndContinueButton: UIButton = {
-        Self.makeSaveAndContinueButton(target: self)
+    private lazy var saveAndCaptureMoreButton: UIButton = {
+        Self.makeSaveAndCaptureMoreButton(target: self)
     }()
 
-    private lazy var landscapeSaveAndContinueButton: UIButton = {
-        let button = Self.makeSaveAndContinueButton(target: self)
+    private lazy var landscapeSaveAndCaptureMoreButton: UIButton = {
+        let button = Self.makeSaveAndCaptureMoreButton(target: self)
         button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         button.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
         button.isHidden = true
@@ -399,12 +399,12 @@ final class CameraOverlayView: UIView {
         return button
     }()
 
-    private lazy var finishReviewButton: UIButton = {
-        Self.makeFinishReviewButton(target: self)
+    private lazy var saveAndEndCaptureButton: UIButton = {
+        Self.makeSaveAndEndCaptureButton(target: self)
     }()
 
-    private lazy var landscapeFinishReviewButton: UIButton = {
-        let button = Self.makeFinishReviewButton(target: self)
+    private lazy var landscapeSaveAndEndCaptureButton: UIButton = {
+        let button = Self.makeSaveAndEndCaptureButton(target: self)
         button.isHidden = true
 
         addSubview(button)
@@ -441,7 +441,7 @@ final class CameraOverlayView: UIView {
         return button
     }
 
-    private static func makeSaveAndContinueButton(target: Any?) -> UIButton {
+    private static func makeSaveAndCaptureMoreButton(target: Any?) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Use Photo", for: .normal)
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
@@ -459,7 +459,7 @@ final class CameraOverlayView: UIView {
         return button
     }
 
-    private static func makeFinishReviewButton(target: Any?) -> UIButton {
+    private static func makeSaveAndEndCaptureButton(target: Any?) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Finish", for: .normal)
         button.setTitleColor(.init(white: 1.0, alpha: 0.9), for: .normal)
@@ -509,7 +509,7 @@ extension CameraOverlayView {
         backgroundColor = .clear
 
         _ = flashButton
-        _ = finishControlPanelButton
+        _ = controlPanelFinishButton
         _ = previewImageView
         _ = controlPanelView
         _ = cancelButton
@@ -540,28 +540,28 @@ extension CameraOverlayView {
             hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 64 + frame.width * 4 / 3 - 100, width: frame.width, height: 100)
 
             reviewButtonStack.isHidden = reviewButtonsHidden
-            landscapeFinishReviewButton.isHidden = true
+            landscapeSaveAndEndCaptureButton.isHidden = true
             landscapeRetakeButton.isHidden = true
-            landscapeSaveAndContinueButton.isHidden = true
+            landscapeSaveAndCaptureMoreButton.isHidden = true
         case .portraitUpsideDown:
             transform = CGAffineTransform.identity.rotated(by: 180 * .pi / 180)
             hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 64, width: frame.width, height: 100)
             reviewButtonStack.isHidden = reviewButtonsHidden
-            landscapeFinishReviewButton.isHidden = true
+            landscapeSaveAndEndCaptureButton.isHidden = true
             landscapeRetakeButton.isHidden = true
-            landscapeSaveAndContinueButton.isHidden = true
+            landscapeSaveAndCaptureMoreButton.isHidden = true
         case .landscapeRight:
             transform = CGAffineTransform.identity.rotated(by: 90 * .pi / 180)
             hintSuperviewFrame = CGRect(x: frame.width - 75, y: 64, width: 75, height: frame.width * 4 / 3)
             reviewButtonStack.isHidden = true
             landscapeRetakeButton.isHidden = reviewButtonsHidden
-            landscapeSaveAndContinueButton.isHidden = reviewButtonsHidden
+            landscapeSaveAndCaptureMoreButton.isHidden = reviewButtonsHidden
         case .landscapeLeft:
             transform = CGAffineTransform.identity.rotated(by: -90 * .pi / 180)
             hintSuperviewFrame = CGRect(x: 0, y: 64, width: 75, height: frame.width * 4 / 3)
             reviewButtonStack.isHidden = true
             landscapeRetakeButton.isHidden = reviewButtonsHidden
-            landscapeSaveAndContinueButton.isHidden = reviewButtonsHidden
+            landscapeSaveAndCaptureMoreButton.isHidden = reviewButtonsHidden
         @unknown default:
             return
         }
@@ -569,14 +569,14 @@ extension CameraOverlayView {
         hintLabel.superview?.transform = transform
         hintLabel.superview?.frame = hintSuperviewFrame
         flashButton.transform = transform
-        finishControlPanelButton.transform = transform
+        controlPanelFinishButton.transform = transform
         cancelButton.transform = transform
-        finishReviewButton.transform = transform
+        saveAndEndCaptureButton.transform = transform
         retakeButton.transform = transform
-        saveAndContinueButton.transform = transform
-        landscapeFinishReviewButton.transform = transform
+        saveAndCaptureMoreButton.transform = transform
+        landscapeSaveAndEndCaptureButton.transform = transform
         landscapeRetakeButton.transform = transform
-        landscapeSaveAndContinueButton.transform = transform
+        landscapeSaveAndCaptureMoreButton.transform = transform
     }
 
     private static func styleButton(_ button: UIButton, outline: Bool, color: UIColor) {
