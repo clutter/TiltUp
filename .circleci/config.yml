@@ -8,6 +8,9 @@ jobs:
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run: brew install mint
+      - run: mint bootstrap --link
+      - run: swiftlint version
       - run: bundle install
       - run: 
           name: Add and Update Private Clutter CocoaPods Specs
@@ -32,6 +35,9 @@ jobs:
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run: brew install mint
+      - run: mint bootstrap --link
+      - run: swiftlint version
       - run: brew tap danger/tap
       - run: brew install danger/tap/danger-swift
       - run: brew install swiftlint
