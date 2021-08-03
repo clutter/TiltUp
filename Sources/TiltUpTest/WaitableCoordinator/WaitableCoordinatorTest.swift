@@ -11,7 +11,7 @@ import XCTest
 
 import TiltUp
 
-public protocol WaitableCoordinatorTest: class { }
+public protocol WaitableCoordinatorTest: AnyObject { }
 
 public extension WaitableCoordinatorTest where Self: XCTestCase {
     func waitForTopViewControllerChange<T: Coordinator>(using coordinator: T, work: () -> Void) {

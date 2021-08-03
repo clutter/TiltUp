@@ -9,6 +9,8 @@
 import AVFoundation
 import UIKit
 
+// swiftlint:disable file_length
+
 protocol CameraOverlayViewDelegate: AnyObject {
     func toggleFlashMode()
     func confirmPictures()
@@ -18,24 +20,7 @@ protocol CameraOverlayViewDelegate: AnyObject {
     func cancelCamera()
 }
 
-final class ShutterButton: UIButton {
-    override var isHighlighted: Bool {
-        didSet {
-            layer.borderColor = UIColor.white.withAlphaComponent(isHighlighted ? 0.5 : 1.0).cgColor
-        }
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        layer.borderColor = UIColor.white.cgColor
-        layer.cornerRadius = bounds.width / 2
-        layer.borderWidth = bounds.width * 0.05
-
-        backgroundColor = UIColor.white.withAlphaComponent(0.5)
-    }
-}
-
+// swiftlint:disable:next type_body_length
 final class CameraOverlayView: UIView {
     weak var delegate: CameraOverlayViewDelegate?
 
