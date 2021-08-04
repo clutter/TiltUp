@@ -9,13 +9,13 @@
 import UIKit
 
 public protocol NibView: AnyObject {
-    static var nib: UINib { get }
+    static var bundle: Bundle { get }
     static func make() -> Self
 }
 
 public extension NibView {
     static var nib: UINib {
-        return UINib(nibName: String(describing: self), bundle: Bundle(for: self))
+        return UINib(nibName: String(describing: self), bundle: bundle)
     }
 
     static func make() -> Self {

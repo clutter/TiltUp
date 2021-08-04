@@ -11,6 +11,8 @@ import UIKit
 import TiltUp
 
 final class HomeController: UIViewController, StoryboardViewController {
+    static var bundle: Bundle { Bundle.main }
+
     var viewModel: HomeViewModeling!
 
     override func viewDidLoad() {
