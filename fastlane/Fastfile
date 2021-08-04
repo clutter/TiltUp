@@ -15,13 +15,13 @@
 
 default_platform(:ios)
 
-before_all do 
-  cocoapods(podfile: './Example/PodApp/Podfile')
-end
-
 platform :ios do
   desc "Runs all the tests"
-  lane :test do
+  lane :test_pod do
+    cocoapods(podfile: './Example/PodApp/Podfile')
     scan(workspace: "Example/PodApp/TiltUp.xcworkspace", scheme: "TiltUp-Example", device: "iPhone 8", clean: true)
+  end
+  lane :test_spm do
+    scan(workspace: "Example/SPMApp/TiltUp.xcworkspace", scheme: "TiltUp-Example", device: "iPhone 8", clean: true)
   end
 end
