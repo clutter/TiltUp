@@ -1,0 +1,36 @@
+disabled_rules:
+  - function_parameter_count # no way to avoid this in initializers...
+  - large_tuple
+  - line_length
+  - todo
+opt_in_rules:
+  - anyobject_protocol
+  - force_unwrapping
+file_length:
+  warning: 600
+function_body_length:
+  warning: 60
+identifier_name:
+  min_length:
+    warning: 2
+  max_length:
+    warning: 60
+  excluded: # excluded via string array
+    - id
+    - f
+    - s
+    - i
+    - j
+    - x
+    - y
+    - vc
+    - to
+nesting:
+  type_level:
+    warning: 2
+private_over_fileprivate:
+    validate_extensions: true
+
+excluded:
+  - Pods
+

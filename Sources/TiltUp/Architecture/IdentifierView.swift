@@ -10,7 +10,7 @@ import UIKit
 
 public protocol IdentifierView: AnyObject {
     static var identifier: String { get }
-    static var nib: UINib { get }
+    static var bundle: Bundle { get }
 }
 
 public extension IdentifierView {
@@ -19,7 +19,7 @@ public extension IdentifierView {
     }
 
     static var nib: UINib {
-        return UINib(nibName: identifier, bundle: Bundle(for: self))
+        return UINib(nibName: identifier, bundle: bundle)
     }
 }
 

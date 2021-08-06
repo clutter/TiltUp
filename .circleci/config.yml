@@ -2,19 +2,22 @@ version: 2
 codecov:
   token: 15029db0-22fe-4e7e-a30f-7c2996190dbe
 jobs:
-  build-and-test:
+  build-and-test-pods:
     macos:
       xcode: 12.1.0
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run: brew install mint
+      - run: mint bootstrap --link
+      - run: swiftlint version
       - run: bundle install
       - run: 
           name: Add and Update Private Clutter CocoaPods Specs
           command: Scripts/add_and_update_clutter_specs.sh
       - run:
           name: Fastlane
-          command: bundle exec fastlane ios test
+          command: bundle exec fastlane ios test_pod
       - store_test_results:
           path: test_output/report.xml
       - store_artifacts:
@@ -23,6 +26,28 @@ jobs:
       - store_artifacts:
           path: ~/Library/Logs/scan
           destination: scan-logs
+  build-and-test-spm:
+    macos:
+      xcode: 12.1.0
+    shell: /bin/bash --login -o pipefail
+    steps:
+      - checkout
+      - run: brew install mint
+      - run: mint bootstrap --link
+      - run: swiftlint version
+      - run: bundle install
+      - run:
+          name: Fastlane
+          command: bundle exec fastlane ios test_spm
+      - store_test_results:
+          path: test_output/report.xml
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: scan-test-results
+      - store_artifacts:
+          path: ~/Library/Logs/scan
+          destination: scan-logs
+
   danger:
     macos:
       xcode: 12.1.0
@@ -32,9 +57,11 @@ jobs:
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run: brew install mint
+      - run: mint bootstrap --link
+      - run: swiftlint version
       - run: brew tap danger/tap
       - run: brew install danger/tap/danger-swift
-      - run: brew install swiftlint
       - run:
           name: Danger
           command: danger-swift ci
@@ -43,5 +70,6 @@ workflows:
   version: 2
   build-test-adhoc:
     jobs:
-      - build-and-test
+      - build-and-test-pods
+      - build-and-test-spm
       - danger

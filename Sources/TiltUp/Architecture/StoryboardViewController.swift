@@ -10,6 +10,7 @@ import UIKit
 
 public protocol StoryboardViewController: AnyObject {
     static func make() -> Self
+    static var bundle: Bundle { get }
 }
 
 public extension StoryboardViewController {
