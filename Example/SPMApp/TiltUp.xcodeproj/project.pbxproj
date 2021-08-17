@@ -19,7 +19,6 @@
 		0B25C6792304C2B300F88096 /* TestAppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B25C6732304C2B200F88096 /* TestAppCoordinator.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		780DE4A324205FCB00AD18DD /* PhotoCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DE4A224205FCB00AD18DD /* PhotoCaptureTests.swift */; };
-		781B6E9E23B143CD000EA68B /* CameraCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B6E9D23B143CD000EA68B /* CameraCoordinator.swift */; };
 		78712FA226B8C9AD00F965F7 /* TiltUp in Frameworks */ = {isa = PBXBuildFile; productRef = 78712FA126B8C9AD00F965F7 /* TiltUp */; };
 		78712FAA26B8C9D600F965F7 /* TiltUpTest in Frameworks */ = {isa = PBXBuildFile; productRef = 78712FA926B8C9D600F965F7 /* TiltUpTest */; };
 		9FC1627426CC7A1B004B3513 /* CameraCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1627326CC7A1B004B3513 /* CameraCoordinatorTests.swift */; };
@@ -56,7 +55,6 @@
 		607FACE51AFB9204008FA782 /* TiltUp_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TiltUp_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		780DE4A224205FCB00AD18DD /* PhotoCaptureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureTests.swift; sourceTree = "<group>"; };
-		781B6E9D23B143CD000EA68B /* CameraCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCoordinator.swift; sourceTree = "<group>"; };
 		78B7560126B8C49D006A1791 /* TiltUp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TiltUp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B7560326B8C4B2006A1791 /* TiltUpTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TiltUpTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC1627326CC7A1B004B3513 /* CameraCoordinatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraCoordinatorTests.swift; sourceTree = "<group>"; };
@@ -98,7 +96,6 @@
 		0B25C65A2304730500F88096 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				781B6E9C23B14395000EA68B /* Camera */,
 				0B25C6602304730500F88096 /* Bootstrap */,
 				0B25C65B2304730500F88096 /* Home */,
 			);
@@ -210,14 +207,6 @@
 				78B7560126B8C49D006A1791 /* TiltUp.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		781B6E9C23B14395000EA68B /* Camera */ = {
-			isa = PBXGroup;
-			children = (
-				781B6E9D23B143CD000EA68B /* CameraCoordinator.swift */,
-			);
-			path = Camera;
 			sourceTree = "<group>";
 		};
 		BB1598772589674A00DE7F2C /* Extensions */ = {
@@ -388,7 +377,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
-				781B6E9E23B143CD000EA68B /* CameraCoordinator.swift in Sources */,
 				0B25C66A2304730500F88096 /* HomeCoordinator.swift in Sources */,
 				0B25C6672304730500F88096 /* HomeController.swift in Sources */,
 				0B25C6682304730500F88096 /* HomeViewModel.swift in Sources */,

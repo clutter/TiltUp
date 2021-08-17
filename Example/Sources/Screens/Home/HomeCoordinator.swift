@@ -24,14 +24,48 @@ private extension HomeCoordinator {
         let viewModel = HomeViewModel()
         controller.viewModel = viewModel
 
-        viewModel.coordinatorObservers.goToCamera = {
-            let coordinator = CameraCoordinator(parent: self)
-            coordinator.start()
+        viewModel.coordinatorObservers.goToCamera = { [weak self] in
+            self?.goToCamera()
         }
 
-        // TODO: Set viewModel.coordinatorObservers
-
-        // TODO: Decide whether to replaceRoot / push / present modally
         router.replaceRoot(with: controller, retaining: self)
+    }
+
+    func goToCamera() {
+        let hintProvider: HintProvider = { numberOfPhotos in
+            return "\(numberOfPhotos) Photos Captured"
+        }
+
+        let numberOfPhotos = 2...10
+        let logger = Camera.Logger(info: { _ in }, bug: { _  in })
+        let cameraViewModel = CameraViewModel(settings: .init(numberOfPhotos: numberOfPhotos), logger: logger)
+
+        cameraViewModel.coordinatorObservers.tappedCancel = { [weak self] in
+            guard let self = self else { return }
+            self.router.dismissModal()
+        }
+
+        cameraViewModel.coordinatorObservers.capturedPhotos = { [weak self] photoCaptures in
+            print("Captured \(photoCaptures.count) Photos")
+            for (i, photoCapture) in photoCaptures.enumerated() {
+                print(
+                    """
+                    Photo \(i):
+                        Expected Duration: \(photoCapture.expectedCaptureDuration.converted(to: .seconds))
+                        Actual Duration: \(photoCapture.actualCaptureDuration.converted(to: .seconds))
+                    """
+                )
+            }
+            self?.router.dismissModal()
+        }
+
+        let coordinator = CameraCoordinator(
+            parent: self,
+            modal: true,
+            hintProvider: hintProvider,
+            viewModel: cameraViewModel
+        )
+
+        coordinator.start()
     }
 }
