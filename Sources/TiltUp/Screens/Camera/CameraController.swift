@@ -20,14 +20,14 @@ public final class CameraController: UIViewController {
 
     public init(viewModel: CameraViewModel, hint: String?) {
         self.viewModel = viewModel
-        overlayView = CameraOverlayView(hint: { _ in hint })
+        overlayView = CameraOverlayView(hintProvider: { _ in hint })
 
         super.init(nibName: nil, bundle: nil)
     }
 
-    public init(viewModel: CameraViewModel, hint: @escaping (_ numberOfPhotos: Int) -> String?) {
+    public init(viewModel: CameraViewModel, hint: @escaping HintProvider) {
         self.viewModel = viewModel
-        overlayView = CameraOverlayView(hint: hint)
+        overlayView = CameraOverlayView(hintProvider: hint)
 
         super.init(nibName: nil, bundle: nil)
     }
