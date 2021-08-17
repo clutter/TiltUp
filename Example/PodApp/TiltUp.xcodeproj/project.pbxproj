@@ -23,6 +23,7 @@
 		781B6E9E23B143CD000EA68B /* CameraCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B6E9D23B143CD000EA68B /* CameraCoordinator.swift */; };
 		78B7560226B8C49D006A1791 /* TiltUp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78B7560126B8C49D006A1791 /* TiltUp.framework */; };
 		78B7560426B8C4B2006A1791 /* TiltUpTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78B7560326B8C4B2006A1791 /* TiltUpTest.framework */; };
+		9FC1627126CC6D14004B3513 /* CameraCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1627026CC6D14004B3513 /* CameraCoordinatorTests.swift */; };
 		BB1598792589677100DE7F2C /* Sequence+sumTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1598782589677100DE7F2C /* Sequence+sumTests.swift */; };
 		BBD511DD2320206D00EB8673 /* UnexpectedNilErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD511DC2320206D00EB8673 /* UnexpectedNilErrorTests.swift */; };
 		BBD58F3723593DF500FDD6FE /* SingleSelectionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD58F3623593DF500FDD6FE /* SingleSelectionViewModelTests.swift */; };
@@ -63,6 +64,7 @@
 		781B6E9D23B143CD000EA68B /* CameraCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCoordinator.swift; sourceTree = "<group>"; };
 		78B7560126B8C49D006A1791 /* TiltUp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TiltUp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B7560326B8C4B2006A1791 /* TiltUpTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TiltUpTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FC1627026CC6D14004B3513 /* CameraCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCoordinatorTests.swift; sourceTree = "<group>"; };
 		BB1598782589677100DE7F2C /* Sequence+sumTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+sumTests.swift"; sourceTree = "<group>"; };
 		BBD511DC2320206D00EB8673 /* UnexpectedNilErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnexpectedNilErrorTests.swift; sourceTree = "<group>"; };
 		BBD58F3623593DF500FDD6FE /* SingleSelectionViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleSelectionViewModelTests.swift; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				780DE4A224205FCB00AD18DD /* PhotoCaptureTests.swift */,
+				9FC1627026CC6D14004B3513 /* CameraCoordinatorTests.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -503,6 +506,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B25C6762304C2B300F88096 /* TestCoordinator.swift in Sources */,
+				9FC1627126CC6D14004B3513 /* CameraCoordinatorTests.swift in Sources */,
 				BBD58F3723593DF500FDD6FE /* SingleSelectionViewModelTests.swift in Sources */,
 				BBD511DD2320206D00EB8673 /* UnexpectedNilErrorTests.swift in Sources */,
 				780DE4A324205FCB00AD18DD /* PhotoCaptureTests.swift in Sources */,
