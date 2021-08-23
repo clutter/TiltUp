@@ -11,6 +11,9 @@ import UIKit
 
 // swiftlint:disable file_length
 
+/// Closure for providing the photo hint / prompt given the number of photos that have already been captured
+public typealias HintProvider = (Int) -> String?
+
 protocol CameraOverlayViewDelegate: AnyObject {
     func toggleFlashMode()
     func confirmPictures()
@@ -49,7 +52,7 @@ final class CameraOverlayView: UIView {
         case confirm(photoCapture: PhotoCapture, remainingPhotoType: RemainingPhotoType)
     }
 
-    private var hint: (_ numberOfPhotos: Int) -> String?
+    private var hintProvider: HintProvider
 
     var state = State.start(count: 0, canComplete: false) {
         didSet {
@@ -67,7 +70,7 @@ final class CameraOverlayView: UIView {
                 landscapeRetakeButton.isHidden = true
                 landscapeSaveAndCaptureMoreButton.isHidden = true
 
-                hintLabel.text = hint(count)
+                hintLabel.text = hintProvider(count)
 
             case .capture:
                 cancelButton.isHidden = true
@@ -462,17 +465,17 @@ final class CameraOverlayView: UIView {
         return button
     }
 
-    required init(hint: @escaping (_ numberOfPhotos: Int) -> String?) {
-        self.hint = hint
+    required init(hintProvider: @escaping HintProvider) {
+        self.hintProvider = hintProvider
 
         super.init(frame: .zero)
 
         setUpViews()
-        hintLabel.text = hint(0)
+        hintLabel.text = hintProvider(0)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        hint = { _ in nil }
+        hintProvider = { _ in nil }
 
         super.init(coder: aDecoder)
 
