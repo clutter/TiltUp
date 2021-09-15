@@ -344,6 +344,75 @@ extension BaseTableViewObservers {
 }
 ```
 
+### WaitableCoordinatorTest
+
+An `XCTestCase` can conform to `WaitableCoordinatorTest` to gain
+access to some useful helpers around testing view controller changes.
+
+There are four helpers:
+
+`waitForTopViewControllerChange<T: Coordinator>(using coordinator: T, work: () -> Void)`
+`waitForPresentedViewControllerChange<T: Coordinator>(using coordinator: T, work: () -> Void)`
+`waitForTopViewControllerChange(in router: Router, work: () -> Void)`
+`waitForPresentedViewControllerChange(in router: Router, work: () -> Void)`
+
+These helpers execute the `work` and wait for either the presented or top
+view controller of the coordinator's route to change.
+
+Some examples of these being used would look like:
+
+```swift
+final class ExampleCoordinatorTests: XCTestCase, WaitableCoordinatorTest {
+    ...
+
+    func testGoToReview() throws {
+        ...
+
+        waitForTopViewControllerChange(using: coordinator) {
+            coordinator.goToReview()
+        }
+
+        assertType(of: coordinator.router.navigationController.topViewController, is: ReviewController.self)
+    }
+
+    func testGoToCamera() throws {
+        ...
+
+        waitForPresentedViewControllerChange(using: coordinator) {
+            coordinator.goToCamera()
+        }
+
+        let presentedNavigationController = try assertUnwrap(
+            coordinator.router.navigationController.presentedViewController as? UINavigationController
+        )
+        assertType(of: presentedNavigationController.topViewController, is: CameraController.self)
+    }
+
+    func testGoToNotes() throws {
+        ...
+
+        waitForTopViewControllerChange(in: coordinator.router) {
+            coordinator.goToNotes()
+        }
+
+        assertType(of: coordinator.router.navigationController.topViewController, is: NotesController.self)
+    }
+
+    func testGoToAlert() throws {
+        ...
+
+        waitForPresentedViewControllerChange(in: coordinator.router) {
+            coordinator.goToAlert()
+        }
+
+        let presentedNavigationController = try assertUnwrap(
+            coordinator.router.navigationController.presentedViewController as? UINavigationController
+        )
+        assertType(of: presentedNavigationController.topViewController, is: AlertController.self)
+    }
+}
+```
+
 ### Errors
 
 #### UnexpectedNilError
