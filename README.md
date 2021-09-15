@@ -38,7 +38,78 @@ bundle exec pod install
 
 ### Architecture
 
-TODO: Document Architecture components
+### Routers
+
+#### Presenting and dismissing modals
+
+Using a router to present a modal view controller is easy. If you want to
+present an alert controller, or any other modal view controller that doesn’t
+have its own coordinator or router, use `router.presentModal(viewController)`:
+
+```swift
+let viewController = SomeViewController(/* ... */)
+router.presentModal(viewController)
+```
+
+If the modal you want to present does have its own coordinator and router, use
+`parentRouter.presentModal(modalRouter)` instead:
+
+```swift
+class FooCoordinator: Coordinator {
+  init(parent: Coordinating) {
+    super.init(parent: parent, modal: false)
+  }
+  
+  func start() {
+    goToFoo()
+  }
+  
+  func goToFoo() {
+    let controller = FooController.make()
+    let viewModel = FooViewModel()
+    controller.viewModel = viewModel
+    
+    viewModel.coordinatorObservers.goToModalScreen = { [weak self] in 
+      self?.goToModalScreen()
+    }
+    
+    router.push(controller, retaining: self)
+  }
+  
+  func goToModalScreen() {
+    let modalScreenCoordinator = ModalScreenCoordinator(parent: self)
+    modalScreenCoordinator.start()
+  }
+}
+
+class ModalScreenCoordinator: Coordinator {
+  init(parent: Coordinating) {
+    super.init(parent: parent, modal: true)
+  }
+  
+  func start() {
+    goToModalScreen()
+  }
+  
+  func goToModalScreen() {
+    let controller = ModalScreenController.make()
+    let viewModel = ModalScreenViewModel()
+    controller.viewModel = viewModel
+    
+    router.push(controller)
+    parent?.router.presentModal(router)
+  }
+}
+```
+
+To dismiss a modal, call `router.dismissModal()`. If you need execute code after the modal has been dismissed, you can pass in a `dismissHandler`:
+
+```swift
+router.dismissModal(dismissHandler: { [weak self] in
+    // Take some action
+})
+```
+Note: If you pass in a coordinator via the `retaining` parameter, that coordinator will automatically be popped when the modal is dismissed.
 
 ### Sum Helpers
 
@@ -449,7 +520,6 @@ func requireNotNil<T>(_ value: T?, file: StaticString = #file, line: UInt = #lin
 Clutter Engineering Team, tech@clutter.com
 
 [Type Casting]: https://docs.swift.org/swift-book/LanguageGuide/TypeCasting.html
-[UIView.animate]: https://developer.apple.com/documentation/uikit/uiview/1622515-animate
 [wait(for:timeout)]: https://developer.apple.com/documentation/xctest/xctestcase/2806856-wait
 [XCTAssertNotNil]: https://developer.apple.com/documentation/xctest/xctassertnotnil
 [XCTUnwrap]: https://developer.apple.com/documentation/xcode_release_notes/xcode_11_beta_7_release_notes
