@@ -1,6 +1,4 @@
 version: 2
-codecov:
-  token: 15029db0-22fe-4e7e-a30f-7c2996190dbe
 jobs:
   build-and-test-pods:
     macos:
