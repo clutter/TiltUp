@@ -367,7 +367,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ $CONFIGURATION != \"Debug\" ]; then\n  exit 0\nfi\n\nif which mint >/dev/null; then\n  echo `pwd`\n  mint run SwiftLint ..\nelse\n  echo \"Mint does not exist\"\n  exit 1\nfi\n";
+			shellScript = "if [ $CONFIGURATION != \"Debug\" ]; then\n  exit 0\nfi\n\nif which mint >/dev/null; then\n  echo `pwd`\n  mint run -m \"../../Mintfile\" SwiftLint ..\nelse\n  echo \"Mint does not exist\"\n  exit 1\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
