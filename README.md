@@ -219,6 +219,131 @@ func testRefreshing() {
 }
 ```
 
+### ViewObserver Protocols
+
+There are multiple protocols provided for common view observers use-cases.
+
+```swift
+public typealias BaseViewObserving = LoadingStateObserving & PresentAlertObserving
+public typealias BaseTableViewObserving = BaseViewObserving & ReloadDataObserving
+
+public protocol ReloadDataObserving {
+    var reloadData: (() -> Void)? { get set }
+}
+
+public protocol LoadingStateObserving {
+    var loadingState: ((LoadingState) -> Void)? { get set }
+}
+
+public protocol PresentAlertObserving {
+    var presentAlert: ((UIAlertController) -> Void)? { get set }
+}
+
+public enum LoadingState {
+    case notLoading
+    case loading(String = "Loading")
+}
+```
+
+An example of this being used would look like:
+
+```swift
+final class ExampleViewObservers: BaseTableViewObservers {} 
+
+final class ExampleViewModel {
+  let viewObservers = ExampleViewObservers()
+  ...
+}
+
+final class ExampleController: UIViewController {
+    let viewModel: ExampleViewModel!
+
+    ...
+
+    func setUpObservers() {
+        viewModel.viewObservers.loadingState = { [weak self] loadingState in
+            ...
+        }
+
+        viewModel.viewObservers.presentAlert = { [weak self] alert in
+            ...
+        }
+
+        viewModel.viewObservers.reloadData = { [weak self] in
+            ...
+        }
+    }
+}
+```
+#### waitForBaseTableViewObservers(...)
+
+`waitForBaseTableViewObservers(
+  _ viewObservers: BaseTableViewObserving, 
+  expectationTypes: [BaseTableViewObservers.ExpectationType], 
+  triggeringAction: (() -> Void)
+)` is an extension on `XCTestCase`  to help check common view observer expectations.
+
+Within your tests, you can test that a triggering action calls the
+corresponding view observers. 
+
+The available `ExpectationTypes` are as follows:
+
+```swift
+extension BaseTableViewObservers {
+    public enum ExpectationType {
+        case presentAlert
+        case loadingCycle
+        case reloadData
+    }
+}
+```
+`loadingCycle` expects two calls to `viewObservers.loadingState` , one `loading` and one `notLoading`. The other expectation types expect a single call.
+
+The tested view observer callbacks are reset to `nil` at the end.
+
+An example of this being used would look like:
+
+```swift
+func testRefreshSuccceeds() {
+    ...
+
+    waitForBaseTableViewObservers(
+        viewModel.viewObservers,
+        expectationTypes: [.loadingCycle, .reloadData],
+        triggeringAction: viewModel.refresh
+    )
+}
+
+func testUpdateFails() {
+    ...
+
+    waitForBaseTableViewObservers(
+        viewModel.viewObservers,
+        expectationTypes: [.loadingCycle, .presentAlert],
+        triggeringAction: { viewModel.update(...) }
+    )
+}
+```
+#### waitForBaseViewObservers(...)
+
+`waitForBaseViewObservers(
+  _ viewObservers: BaseViewObserving, 
+  expectationTypes: [BaseViewObservers.ExpectationType], 
+  triggeringAction: (() -> Void)
+)` is an extension on `XCTestCase`  to help check common view observer expectations.
+
+It behaves identically to `waitForBaseTableViewObservers`, but has only the following
+available `ExpectationTypes` :
+
+```swift
+extension BaseTableViewObservers {
+    public enum ExpectationType {
+        case presentAlert
+        case loadingCycle
+    }
+}
+```
+
 ### Errors
 
 #### UnexpectedNilError
