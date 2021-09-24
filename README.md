@@ -451,7 +451,7 @@ Make sure the TiltUp and TiltUpTest versions match.
 
 ## Author
 
-Jeremy Grenier, jeremy.grenier@clutter.com
+Clutter Engineering Team, tech@clutter.com
 
 [Type Casting]: https://docs.swift.org/swift-book/LanguageGuide/TypeCasting.html
 [UIView.animate]: https://developer.apple.com/documentation/uikit/uiview/1622515-animate
