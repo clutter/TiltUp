@@ -183,24 +183,6 @@ assertTrue(nonOptionalTrue)
 assertFalse(nonOptionalFalse)
 ```
 
-#### testUI
-
-`testUI` takes two `() -> Void` closure parameters, `setup` and `assertions`; it
-calls `setup`, waits for the main thread to run, and calls `assertions`.
-
-`testUI` is useful for testing code that has to wait for the main thread to run
-after triggering UIKit functionality without a callback.
-
-```swift
-func testTappingAnItem() {
-    testUI(setup: {
-        self.coordinator.tappedItem(at: 0)
-    }, completion: {
-        self.assertType(of: self.coordinator.router.navigationController.topViewController, is: ItemDetailsController.self)
-    })
-}
-```
-
 #### wait(for:)
 
 `wait(for:)` is a convenience wrapper for
