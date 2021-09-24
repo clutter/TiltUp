@@ -444,11 +444,6 @@ func requireNotNil<T>(_ value: T?, file: StaticString = #file, line: UInt = #lin
 }
 ```
 
-## Releasing a New Version
-
-See [iOS Wiki](https://github.com/clutter/iOS/wiki/Framework-Release-Process).
-Make sure the TiltUp and TiltUpTest versions match.
-
 ## Author
 
 Clutter Engineering Team, tech@clutter.com
