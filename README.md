@@ -40,6 +40,35 @@ bundle exec pod install
 
 TODO: Document Architecture components
 
+### Sum Helpers
+
+Any sequence can use the `sum` function, which takes a closure. The function applies 
+the given closure to each element of the sequence, adds the transformed elements together, 
+and returns the result. If the sequence is empty, the result is `.zero`.
+
+If the sequence conforms to `AdditiveArithmetic`, the `sum` function can be used without passing
+a closure. It adds the sequence's elements together and returns the result. If the sequence is empty, 
+the result is `.zero`.
+
+Some examples of these helpeprs being used are below.
+
+```swift
+    func testSum() {
+        let numbers = [1, -2, 3, -4]
+        XCTAssertEqual(numbers.sum(), -2)
+    }
+
+    func testSumWithTransformClosure() {
+        let numbers = [1.1, 3.3, 5.5, 7.7, 9.9]
+        XCTAssertEqual(numbers.sum { $0.rounded() }, 28.0, accuracy: 0.001)
+    }
+
+    func testSumWithTransformKeyPath() {
+        let strings = ["aleph", "omega", "double-yoo"]
+        XCTAssertEqual(strings.sum(\.count.description.count), 4)
+    }
+ ```
+
 ## TiltUpTest Usage
 
 ### Assertions
