@@ -40,6 +40,35 @@ bundle exec pod install
 
 TODO: Document Architecture components
 
+### Sum Helpers
+
+Any sequence can use the `sum` function, which takes a closure. The function applies 
+the given closure to each element of the sequence, adds the transformed elements together, 
+and returns the result. If the sequence is empty, the result is `.zero`.
+
+If the sequence conforms to `AdditiveArithmetic`, the `sum` function can be used without passing
+a closure. It adds the sequence's elements together and returns the result. If the sequence is empty, 
+the result is `.zero`.
+
+Some examples of these helpeprs being used are below.
+
+```swift
+    func testSum() {
+        let numbers = [1, -2, 3, -4]
+        XCTAssertEqual(numbers.sum(), -2)
+    }
+
+    func testSumWithTransformClosure() {
+        let numbers = [1.1, 3.3, 5.5, 7.7, 9.9]
+        XCTAssertEqual(numbers.sum { $0.rounded() }, 28.0, accuracy: 0.001)
+    }
+
+    func testSumWithTransformKeyPath() {
+        let strings = ["aleph", "omega", "double-yoo"]
+        XCTAssertEqual(strings.sum(\.count.description.count), 4)
+    }
+ ```
+
 ## TiltUpTest Usage
 
 ### Assertions
@@ -183,24 +212,6 @@ assertTrue(nonOptionalTrue)
 assertFalse(nonOptionalFalse)
 ```
 
-#### testUI
-
-`testUI` takes two `() -> Void` closure parameters, `setup` and `assertions`; it
-calls `setup`, waits for the main thread to run, and calls `assertions`.
-
-`testUI` is useful for testing code that has to wait for the main thread to run
-after triggering UIKit functionality without a callback.
-
-```swift
-func testTappingAnItem() {
-    testUI(setup: {
-        self.coordinator.tappedItem(at: 0)
-    }, completion: {
-        self.assertType(of: self.coordinator.router.navigationController.topViewController, is: ItemDetailsController.self)
-    })
-}
-```
-
 #### wait(for:)
 
 `wait(for:)` is a convenience wrapper for
@@ -216,6 +227,200 @@ func testRefreshing() {
     
     wait(for: [refreshed])
     assertEqual(viewModel.sections.first?.count, 2)
+}
+```
+
+### ViewObserver Protocols
+
+There are multiple protocols provided for common view observers use-cases.
+
+```swift
+public typealias BaseViewObserving = LoadingStateObserving & PresentAlertObserving
+public typealias BaseTableViewObserving = BaseViewObserving & ReloadDataObserving
+
+public protocol ReloadDataObserving {
+    var reloadData: (() -> Void)? { get set }
+}
+
+public protocol LoadingStateObserving {
+    var loadingState: ((LoadingState) -> Void)? { get set }
+}
+
+public protocol PresentAlertObserving {
+    var presentAlert: ((UIAlertController) -> Void)? { get set }
+}
+
+public enum LoadingState {
+    case notLoading
+    case loading(String = "Loading")
+}
+```
+
+An example of this being used would look like:
+
+```swift
+final class ExampleViewObservers: BaseTableViewObservers {} 
+
+final class ExampleViewModel {
+  let viewObservers = ExampleViewObservers()
+  ...
+}
+
+final class ExampleController: UIViewController {
+    let viewModel: ExampleViewModel!
+
+    ...
+
+    func setUpObservers() {
+        viewModel.viewObservers.loadingState = { [weak self] loadingState in
+            ...
+        }
+
+        viewModel.viewObservers.presentAlert = { [weak self] alert in
+            ...
+        }
+
+        viewModel.viewObservers.reloadData = { [weak self] in
+            ...
+        }
+    }
+}
+```
+#### waitForBaseTableViewObservers(...)
+
+`waitForBaseTableViewObservers(
+  _ viewObservers: BaseTableViewObserving, 
+  expectationTypes: [BaseTableViewObservers.ExpectationType], 
+  triggeringAction: (() -> Void)
+)` is an extension on `XCTestCase`  to help check common view observer expectations.
+
+Within your tests, you can test that a triggering action calls the
+corresponding view observers. 
+
+The available `ExpectationTypes` are as follows:
+
+```swift
+extension BaseTableViewObservers {
+    public enum ExpectationType {
+        case presentAlert
+        case loadingCycle
+        case reloadData
+    }
+}
+```
+`loadingCycle` expects two calls to `viewObservers.loadingState` , one `loading` and one `notLoading`. The other expectation types expect a single call.
+
+The tested view observer callbacks are reset to `nil` at the end.
+
+An example of this being used would look like:
+
+```swift
+func testRefreshSuccceeds() {
+    ...
+
+    waitForBaseTableViewObservers(
+        viewModel.viewObservers,
+        expectationTypes: [.loadingCycle, .reloadData],
+        triggeringAction: viewModel.refresh
+    )
+}
+
+func testUpdateFails() {
+    ...
+
+    waitForBaseTableViewObservers(
+        viewModel.viewObservers,
+        expectationTypes: [.loadingCycle, .presentAlert],
+        triggeringAction: { viewModel.update(...) }
+    )
+}
+```
+#### waitForBaseViewObservers(...)
+
+`waitForBaseViewObservers(
+  _ viewObservers: BaseViewObserving, 
+  expectationTypes: [BaseViewObservers.ExpectationType], 
+  triggeringAction: (() -> Void)
+)` is an extension on `XCTestCase`  to help check common view observer expectations.
+
+It behaves identically to `waitForBaseTableViewObservers`, but has only the following
+available `ExpectationTypes` :
+
+```swift
+extension BaseTableViewObservers {
+    public enum ExpectationType {
+        case presentAlert
+        case loadingCycle
+    }
+}
+```
+
+### WaitableCoordinatorTest
+
+An `XCTestCase` can conform to `WaitableCoordinatorTest` to gain
+access to some useful helpers around testing view controller changes.
+
+There are four helpers:
+
+`waitForTopViewControllerChange<T: Coordinator>(using coordinator: T, work: () -> Void)`
+`waitForPresentedViewControllerChange<T: Coordinator>(using coordinator: T, work: () -> Void)`
+`waitForTopViewControllerChange(in router: Router, work: () -> Void)`
+`waitForPresentedViewControllerChange(in router: Router, work: () -> Void)`
+
+These helpers execute the `work` and wait for either the presented or top
+view controller of the coordinator's route to change.
+
+Some examples of these being used would look like:
+
+```swift
+final class ExampleCoordinatorTests: XCTestCase, WaitableCoordinatorTest {
+    ...
+
+    func testGoToReview() throws {
+        ...
+
+        waitForTopViewControllerChange(using: coordinator) {
+            coordinator.goToReview()
+        }
+
+        assertType(of: coordinator.router.navigationController.topViewController, is: ReviewController.self)
+    }
+
+    func testGoToCamera() throws {
+        ...
+
+        waitForPresentedViewControllerChange(using: coordinator) {
+            coordinator.goToCamera()
+        }
+
+        let presentedNavigationController = try assertUnwrap(
+            coordinator.router.navigationController.presentedViewController as? UINavigationController
+        )
+        assertType(of: presentedNavigationController.topViewController, is: CameraController.self)
+    }
+
+    func testGoToNotes() throws {
+        ...
+
+        waitForTopViewControllerChange(in: coordinator.router) {
+            coordinator.goToNotes()
+        }
+
+        assertType(of: coordinator.router.navigationController.topViewController, is: NotesController.self)
+    }
+
+    func testGoToAlert() throws {
+        ...
+
+        waitForPresentedViewControllerChange(in: coordinator.router) {
+            coordinator.goToAlert()
+        }
+
+        let presentedNavigationController = try assertUnwrap(
+            coordinator.router.navigationController.presentedViewController as? UINavigationController
+        )
+        assertType(of: presentedNavigationController.topViewController, is: AlertController.self)
+    }
 }
 ```
 
@@ -239,14 +444,9 @@ func requireNotNil<T>(_ value: T?, file: StaticString = #file, line: UInt = #lin
 }
 ```
 
-## Releasing a New Version
-
-See [iOS Wiki](https://github.com/clutter/iOS/wiki/Framework-Release-Process).
-Make sure the TiltUp and TiltUpTest versions match.
-
 ## Author
 
-Jeremy Grenier, jeremy.grenier@clutter.com
+Clutter Engineering Team, tech@clutter.com
 
 [Type Casting]: https://docs.swift.org/swift-book/LanguageGuide/TypeCasting.html
 [UIView.animate]: https://developer.apple.com/documentation/uikit/uiview/1622515-animate
