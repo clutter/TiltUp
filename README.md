@@ -38,9 +38,52 @@ bundle exec pod install
 
 ### Architecture
 
-### Routers
+#### Coordinators
 
-#### Presenting and dismissing modals
+The `Coordinator` is responsible for handling the navigation logic of the app. It should have methods that allow it to create and start new coordinators as the user moves to new screens.
+
+Each `Coordinator` has a access to an `AppCoordinator`, which retains the coordinator until it is no longer needed (usually, when its associated view controller is popped or dismissed)
+
+Coordinators usually have the following basic structure:
+
+```swift
+final class ExampleCoordinator: Coordinator {
+  private let viewModel: ExampleViewModel
+
+  init(parent: Coordinating) {
+    viewModel = ExampleViewModel()
+    super.init(parent: parent, modal: false)
+  }
+  
+  func start() {
+    goToExample()
+  }
+  
+  func goToExample() {
+    let controller = ExampleController.make()
+    controller.viewModel = viewModel
+    
+    viewModel.coordinatorObservers.goToAnotherScreen = { [weak self] in
+      self?.goToAnotherScreen()
+    }
+    
+    router.push(controller, retaining: self)
+  }
+  
+  func goToAnotherScreen() {
+    let coordinator = AnotherScreenCoordinator(parent: self)
+    coordinator.start()
+  }
+}
+```
+
+#### Routers
+
+`Router` helps you deallocate your coordinators. It exposes methods for pushing, popping, presenting, and dismissing view controllers, and provides completion handlers that trigger when a view controller is popped.
+
+The most important use case for a router is to retain your coordinator on push via `router.push(controller, retaining: coordinator)`
+
+##### Presenting and dismissing modals
 
 Using a router to present a modal view controller is easy. If you want to
 present an alert controller, or any other modal view controller that doesn’t
@@ -111,7 +154,90 @@ router.dismissModal(dismissHandler: { [weak self] in
 ```
 Note: If you pass in a coordinator via the `retaining` parameter, that coordinator will automatically be popped when the modal is dismissed.
 
-### Sum Helpers
+#### ViewModels
+
+View models are meant to hold and organize data for populating the View Controller. They also act as an in-between for passing actions from the `ViewController` to the `Coordinator`
+
+A standard `ViewModel` will have 2 sets of observers, `CoordinatorObservers` and `ViewObservers`.
+
+The `CoordinatorObservers` are used to interact with the `Coordinator`, these are typically used to trigger starting a new `Coordinator` and pushing on a new view.
+
+The `ViewObservers` are used to update the views that are being displayed by the `ViewController`. An example might be that a button can be enabled / disabled based on some business logic in the `ViewModel`, which would be communicated to the controller via the `ViewObserver`
+
+You can read more about [ViewObservers below](#ViewObserver Protocols)
+
+A rough example of the ViewModel can be found below:
+
+```swift
+enum Example {
+    final class CoordinatorObservers {
+        var goToAnotherScreen: (() -> Void)?
+    }
+
+    final class ViewObservers {
+        var updateButton: ((_ isEnabled: Bool) -> Void)?
+    }
+}
+
+final class ExampleViewModel {
+    // MARK: Observers
+    var coordinatorObservers = Example.CoordinatorObservers()
+    var viewObservers = Example.ViewObservers()
+    
+    // MARK: Attributes
+    var buttonIsEnabled: Bool {
+      didSet { 
+        viewObservers.updateButton?(newValue)
+      }
+    }
+
+    init() {
+        // Any initial setup
+    }
+
+    func start() {
+        // Setup that should be called once the ExampleController has loaded
+    }
+
+    func anotherScreenButtonTapped() {
+        coordinatorObservers.goToAnotherScreen?()
+    }
+}
+
+```
+
+#### Controllers
+
+Fairly standard `ViewController`. All `Controllers` should have their own `Storyboard` and should be subclasses of the `StoryboardViewController`
+
+```swift
+final class ExampleController: StoryboardViewController {
+    var viewModel: ExampleViewModel!
+    
+    @IBOutlet weak var actionButton: Button!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        viewModel.viewObservers.updateButton = { [weak self] isEnabled in 
+          self?.actionButton.isEnabled = isEnabled
+        }
+
+        viewModel.start()
+    }
+
+    // MARK: - Actions
+
+    @IBAction func submitAction(_ sender: Any) {
+        viewModel.anotherScreenButtonTapped()
+    }}
+}
+```
+
+
+### Utilities
+
+#### Sum Helpers
 
 Any sequence can use the `sum` function, which takes a closure. The function applies 
 the given closure to each element of the sequence, adds the transformed elements together, 
