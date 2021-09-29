@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run: brew install mint
       - run: mint bootstrap --link
-      - run: swiftlint version
+      - run: mint run -m Mintfile swiftlint version
       - run: bundle install
       - run: 
           name: Add and Update Private Clutter CocoaPods Specs
@@ -32,7 +32,7 @@ jobs:
       - checkout
       - run: brew install mint
       - run: mint bootstrap --link
-      - run: swiftlint version
+      - run: mint run -m Mintfile swiftlint version
       - run: bundle install
       - run:
           name: Fastlane
@@ -57,7 +57,7 @@ jobs:
       - checkout
       - run: brew install mint
       - run: mint bootstrap --link
-      - run: swiftlint version
+      - run: mint run -m Mintfile swiftlint version
       - run: brew tap danger/tap
       - run: brew install danger/tap/danger-swift
       - run:
