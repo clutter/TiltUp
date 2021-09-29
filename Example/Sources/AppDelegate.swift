@@ -3,7 +3,7 @@
 //  TiltUp
 //
 //  Created by Jeremy Grenier on 08/12/2019.
-//  Copyright (c) 2019 Jeremy Grenier. All rights reserved.
+//  Copyright © 2019 Clutter. All rights reserved.
 //
 
 import UIKit
