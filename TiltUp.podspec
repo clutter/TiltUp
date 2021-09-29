@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TiltUp'
-  s.version          = '2.8.0'
+  s.version          = '2.8.1'
   s.summary          = 'Official Clutter SDK in Swift to access core iOS features.'
 
 # This description is used to generate tags and improve search results.
