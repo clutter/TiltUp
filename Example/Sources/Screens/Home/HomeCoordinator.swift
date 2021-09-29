@@ -3,7 +3,7 @@
 //  TiltUp_Example
 //
 //  Created by Jeremy Grenier on 8/14/19.
-//  Copyright © 2019 CocoaPods. All rights reserved.
+//  Copyright © 2019 Clutter. All rights reserved.
 //
 
 import TiltUp
