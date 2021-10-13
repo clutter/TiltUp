@@ -38,6 +38,8 @@ bundle exec pod install
 
 ### Architecture
 
+![architecture](https://user-images.githubusercontent.com/73529/137216479-d053fd5b-090d-475a-a8fe-e885a4fc51dc.png)
+
 #### Coordinators
 
 The `Coordinator` is responsible for handling the navigation logic of the app. It should have methods that allow it to create and start new coordinators as the user moves to new screens.
