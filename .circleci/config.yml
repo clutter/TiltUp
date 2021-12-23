@@ -2,7 +2,7 @@ version: 2
 jobs:
   build-and-test-pods:
     macos:
-      xcode: 12.1.0
+      xcode: 13.0.0
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
@@ -48,10 +48,8 @@ jobs:
 
   danger:
     macos:
-      xcode: 12.1.0
+      xcode: 13.0.0
     working_directory: /Users/distiller/project
-    environment:
-      DANGER_GITHUB_API_TOKEN: 2b388130450c1a4247582e419e761bfd301f984d
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
