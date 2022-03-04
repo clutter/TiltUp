@@ -87,6 +87,10 @@ public final class CameraController: UIViewController {
 
         view.addSubview(previewView)
         view.addSubview(overlayView)
+
+        let safeGuide = self.view.safeAreaLayoutGuide
+        overlayView.topAnchor.constraint(equalTo: safeGuide.topAnchor).isActive = true
+
         overlayView.delegate = viewModel
 
         let pinch = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch))
@@ -111,8 +115,9 @@ public final class CameraController: UIViewController {
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        previewView.frame = CGRect(x: 0.0, y: 64.0, width: view.bounds.width, height: view.bounds.width * 4 / 3)
         overlayView.frame = view.bounds
+        previewView.frame = overlayView.previewImageView.frame
+        
     }
 }
 
