@@ -245,7 +245,7 @@ final class CameraOverlayView: UIView {
         return outerStackView
     }()
 
-    private lazy var previewImageView: UIImageView = {
+    public lazy var previewImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .clear
         imageView.contentMode = .scaleAspectFill
@@ -254,7 +254,7 @@ final class CameraOverlayView: UIView {
 
         imageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 64),
+            imageView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 64),
             imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 3 / 4)
@@ -277,10 +277,10 @@ final class CameraOverlayView: UIView {
 
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: container.topAnchor, constant: 10),
+            label.topAnchor.constraint(equalTo: container.safeAreaLayoutGuide.topAnchor),
             label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 10),
             label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -10),
-            label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -10)
+            label.bottomAnchor.constraint(equalTo: container.safeAreaLayoutGuide.bottomAnchor)
         ])
 
         return label
@@ -294,9 +294,9 @@ final class CameraOverlayView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             view.heightAnchor.constraint(equalToConstant: 100),
-            view.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            view.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor),
+            view.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor)
         ])
 
         return view
@@ -328,7 +328,7 @@ final class CameraOverlayView: UIView {
 
         button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
+            button.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 0),
             button.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16)
         ])
 
@@ -525,7 +525,7 @@ extension CameraOverlayView {
         switch orientation {
         case .portrait:
             transform = .identity
-            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 64 + frame.width * 4 / 3 - 100, width: frame.width, height: 100)
+            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 112 + frame.width * 4 / 3 - 100, width: frame.width, height: 100)
 
             reviewButtonStack.isHidden = reviewButtonsHidden
             landscapeSaveAndEndCaptureButton.isHidden = true
@@ -533,20 +533,20 @@ extension CameraOverlayView {
             landscapeSaveAndCaptureMoreButton.isHidden = true
         case .portraitUpsideDown:
             transform = CGAffineTransform.identity.rotated(by: 180 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 64, width: frame.width, height: 100)
+            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 112, width: frame.width, height: 100)
             reviewButtonStack.isHidden = reviewButtonsHidden
             landscapeSaveAndEndCaptureButton.isHidden = true
             landscapeRetakeButton.isHidden = true
             landscapeSaveAndCaptureMoreButton.isHidden = true
         case .landscapeRight:
             transform = CGAffineTransform.identity.rotated(by: 90 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: frame.width - 75, y: 64, width: 75, height: frame.width * 4 / 3)
+            hintSuperviewFrame = CGRect(x: frame.width - 75, y: 112, width: 75, height: frame.width * 4 / 3)
             reviewButtonStack.isHidden = true
             landscapeRetakeButton.isHidden = reviewButtonsHidden
             landscapeSaveAndCaptureMoreButton.isHidden = reviewButtonsHidden
         case .landscapeLeft:
             transform = CGAffineTransform.identity.rotated(by: -90 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: 0, y: 64, width: 75, height: frame.width * 4 / 3)
+            hintSuperviewFrame = CGRect(x: 0, y: 112, width: 75, height: frame.width * 4 / 3)
             reviewButtonStack.isHidden = true
             landscapeRetakeButton.isHidden = reviewButtonsHidden
             landscapeSaveAndCaptureMoreButton.isHidden = reviewButtonsHidden
