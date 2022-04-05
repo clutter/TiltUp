@@ -13,6 +13,16 @@ public struct PhotoCapture {
     public let expectedCaptureDuration: Measurement<UnitDuration>
     public let actualCaptureDuration: Measurement<UnitDuration>
 
+    static func mock() -> PhotoCapture? {
+        let image = UIImage.make(color: UIColor.cyan, size: CGSize(width: 640, height: 640))
+
+        return PhotoCapture(
+            forStubbingWith: image,
+            expectedCaptureDuration: .init(value: 0, unit: .seconds),
+            actualCaptureDuration: .init(value: 0, unit: .seconds)
+        )
+    }
+
     init?(
         capture: AVCapturePhoto,
         expectedCaptureDuration: Measurement<UnitDuration>,

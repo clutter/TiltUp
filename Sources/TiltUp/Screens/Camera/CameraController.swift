@@ -117,7 +117,6 @@ public final class CameraController: UIViewController {
 
         overlayView.frame = view.bounds
         previewView.frame = overlayView.previewImageView.frame
-        
     }
 }
 

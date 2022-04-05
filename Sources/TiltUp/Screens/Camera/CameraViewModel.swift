@@ -102,25 +102,7 @@ public final class CameraViewModel: NSObject {
 
         super.init()
 
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .authorized:
-            break
-
-        case .notDetermined:
-            sessionQueue.suspend()
-            AVCaptureDevice.requestAccess(for: .video, completionHandler: { granted in
-                if granted == false {
-                    self.setupResult = .notAuthorized
-                }
-                self.sessionQueue.resume()
-            })
-
-        case .restricted, .denied:
-            setupResult = .notAuthorized
-
-        @unknown default:
-            setupResult = .notAuthorized
-        }
+        fetchSetupResult()
 
         sessionQueue.async(execute: configureSession)
 
@@ -140,11 +122,38 @@ public final class CameraViewModel: NSObject {
     func viewWillDisappear() {
         sessionQueue.async(execute: stopSession)
     }
+
+    private func fetchSetupResult() {
+        #if targetEnvironment(simulator)
+        setupResult = .pending
+        #else
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            break
+
+        case .notDetermined:
+            sessionQueue.suspend()
+            AVCaptureDevice.requestAccess(for: .video, completionHandler: { granted in
+                if granted == false {
+                    self.setupResult = .notAuthorized
+                }
+                self.sessionQueue.resume()
+            })
+
+        case .restricted, .denied:
+            setupResult = .notAuthorized
+
+        @unknown default:
+            setupResult = .notAuthorized
+        }
+        #endif
+    }
 }
 
 // MARK: Session
 private extension CameraViewModel {
     func configureSession() {
+        #if !targetEnvironment(simulator)
         guard setupResult == .pending else { return }
 
         session.beginConfiguration()
@@ -207,6 +216,7 @@ private extension CameraViewModel {
         resetFocus()
 
         viewObservers.updatePreviewSession?(session)
+        #endif
     }
 
     func startSession() {
@@ -266,7 +276,13 @@ private extension CameraViewModel {
 
 // MARK: Capture
 private extension CameraViewModel {
-    func capturePhoto() {
+    func captureMockPhoto() {
+        guard let photoCapture = PhotoCapture.mock() else { return }
+        photoCapturePrepared(photoCapture)
+        viewObservers.didCapturePhotoAnimation?()
+    }
+
+    func captureLivePhoto() {
         if let photoOutputConnection = photoOutput.connection(with: .video) {
             photoOutputConnection.videoOrientation = currentVideoOrientation
         }
@@ -295,26 +311,19 @@ private extension CameraViewModel {
         photoOutput.capturePhoto(with: photoSettings, delegate: photoCaptureDelegate)
     }
 
+    func capturePhoto() {
+        #if targetEnvironment(simulator)
+        captureMockPhoto()
+        #else
+        captureLivePhoto()
+        #endif
+    }
+
     func capturePhotoCompletion(_ photoCaptureDelegate: PhotoCaptureDelegate) {
         resetFocus()
 
         if let photoCapture = photoCaptureDelegate.photoCapture {
-            var remainingPhotoType: CameraOverlayView.RemainingPhotoType = .none
-            let photoCountIncludingCurrentPhoto = photos.count + 1
-            if photoCountIncludingCurrentPhoto < settings.numberOfPhotos.upperBound {
-                if photoCountIncludingCurrentPhoto >= settings.numberOfPhotos.lowerBound {
-                    remainingPhotoType = .optional
-                } else {
-                    remainingPhotoType = .required
-                }
-            }
-
-            viewObservers.updateOverlayState?(
-                .confirm(
-                    photoCapture: photoCapture,
-                    remainingPhotoType: remainingPhotoType
-                )
-            )
+            photoCapturePrepared(photoCapture)
         }
 
         // When the capture is complete, remove a reference to the photo capture delegate so it can be deallocated.
@@ -323,6 +332,25 @@ private extension CameraViewModel {
         }
 
         viewObservers.didCapturePhotoAnimation?()
+    }
+
+    func photoCapturePrepared(_ photoCapture: PhotoCapture) {
+        var remainingPhotoType: CameraOverlayView.RemainingPhotoType = .none
+        let photoCountIncludingCurrentPhoto = photos.count + 1
+        if photoCountIncludingCurrentPhoto < settings.numberOfPhotos.upperBound {
+            if photoCountIncludingCurrentPhoto >= settings.numberOfPhotos.lowerBound {
+                remainingPhotoType = .optional
+            } else {
+                remainingPhotoType = .required
+            }
+        }
+
+        viewObservers.updateOverlayState?(
+            .confirm(
+                photoCapture: photoCapture,
+                remainingPhotoType: remainingPhotoType
+            )
+        )
     }
 }
 
