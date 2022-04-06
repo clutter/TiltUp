@@ -22,7 +22,7 @@ public extension WaitableCoordinatorTest where Self: XCTestCase {
             viewControllerChanged?.cancel()
         }
         work()
-        wait(for: [viewControllerChangedExpectation])
+        wait(for: [viewControllerChangedExpectation], timeout: 5.0)
     }
 
     func waitForPresentedViewControllerChange<T: Coordinator>(using coordinator: T, work: () -> Void) {
@@ -33,7 +33,7 @@ public extension WaitableCoordinatorTest where Self: XCTestCase {
             viewControllerChanged?.cancel()
         }
         work()
-        wait(for: [viewControllerChangedExpectation])
+        wait(for: [viewControllerChangedExpectation], timeout: 5.0)
     }
 
     func waitForTopViewControllerChange(in router: Router, work: () -> Void) {
@@ -44,7 +44,7 @@ public extension WaitableCoordinatorTest where Self: XCTestCase {
             viewControllerChanged?.cancel()
         }
         work()
-        wait(for: [viewControllerChangedExpectation])
+        wait(for: [viewControllerChangedExpectation], timeout: 5.0)
     }
 
     func waitForPresentedViewControllerChange(in router: Router, work: () -> Void) {
@@ -55,6 +55,6 @@ public extension WaitableCoordinatorTest where Self: XCTestCase {
             viewControllerChanged?.cancel()
         }
         work()
-        wait(for: [viewControllerChangedExpectation])
+        wait(for: [viewControllerChangedExpectation], timeout: 5.0)
     }
 }
