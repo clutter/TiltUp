@@ -515,6 +515,9 @@ extension CameraOverlayView {
             atTop = false
         }
 
+        // Apply an offset to the hint view frame based on whether the device has a notch
+        let hintViewYOffset: CGFloat = UIApplication.shared.delegate?.window??.safeAreaInsets.top ?? 0 > 20 ? 112 : 64
+
         let reviewButtonsHidden: Bool
         if case State.confirm = state {
             reviewButtonsHidden = false
@@ -525,28 +528,29 @@ extension CameraOverlayView {
         switch orientation {
         case .portrait:
             transform = .identity
-            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 112 + frame.width * 4 / 3 - 100, width: frame.width, height: 100)
+            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : hintViewYOffset + frame.width * 4 / 3 - 100, width: frame.width, height: 100)
 
             reviewButtonStack.isHidden = reviewButtonsHidden
             landscapeSaveAndEndCaptureButton.isHidden = true
             landscapeRetakeButton.isHidden = true
             landscapeSaveAndCaptureMoreButton.isHidden = true
+
         case .portraitUpsideDown:
             transform = CGAffineTransform.identity.rotated(by: 180 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : 112, width: frame.width, height: 100)
+            hintSuperviewFrame = CGRect(x: 0, y: atTop ? 0 : hintViewYOffset, width: frame.width, height: 100)
             reviewButtonStack.isHidden = reviewButtonsHidden
             landscapeSaveAndEndCaptureButton.isHidden = true
             landscapeRetakeButton.isHidden = true
             landscapeSaveAndCaptureMoreButton.isHidden = true
         case .landscapeRight:
             transform = CGAffineTransform.identity.rotated(by: 90 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: frame.width - 75, y: 112, width: 75, height: frame.width * 4 / 3)
+            hintSuperviewFrame = CGRect(x: frame.width - 75, y: hintViewYOffset, width: 75, height: frame.width * 4 / 3)
             reviewButtonStack.isHidden = true
             landscapeRetakeButton.isHidden = reviewButtonsHidden
             landscapeSaveAndCaptureMoreButton.isHidden = reviewButtonsHidden
         case .landscapeLeft:
             transform = CGAffineTransform.identity.rotated(by: -90 * .pi / 180)
-            hintSuperviewFrame = CGRect(x: 0, y: 112, width: 75, height: frame.width * 4 / 3)
+            hintSuperviewFrame = CGRect(x: 0, y: hintViewYOffset, width: 75, height: frame.width * 4 / 3)
             reviewButtonStack.isHidden = true
             landscapeRetakeButton.isHidden = reviewButtonsHidden
             landscapeSaveAndCaptureMoreButton.isHidden = reviewButtonsHidden
