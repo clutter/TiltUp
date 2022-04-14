@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'TiltUpTest'
-  s.version          = '3.1.1'
+  s.version          = '3.1.2'
   s.summary          = 'Official Clutter SDK in Swift to access core iOS test helpers.'
 
   s.description      = <<-DESC
