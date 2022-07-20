@@ -286,8 +286,6 @@
 			dependencies = (
 			);
 			name = TiltUp_Example;
-			packageProductDependencies = (
-			);
 			productName = TiltUp;
 			productReference = 607FACD01AFB9204008FA782 /* TiltUp_Example.app */;
 			productType = "com.apple.product-type.application";
@@ -308,8 +306,6 @@
 				607FACE71AFB9204008FA782 /* PBXTargetDependency */,
 			);
 			name = TiltUp_Tests;
-			packageProductDependencies = (
-			);
 			productName = Tests;
 			productReference = 607FACE51AFB9204008FA782 /* TiltUp_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -382,12 +378,13 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Example/Pods-TiltUp_Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Example/Pods-TiltUp_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/TiltUp/TiltUp.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Example/Pods-TiltUp_Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TiltUp.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -399,12 +396,15 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Tests/Pods-TiltUp_Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Tests/Pods-TiltUp_Tests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/TiltUp/TiltUp.framework",
+				"${BUILT_PRODUCTS_DIR}/TiltUpTest/TiltUpTest.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TiltUp_Tests/Pods-TiltUp_Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TiltUp.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TiltUpTest.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
