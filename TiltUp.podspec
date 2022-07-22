@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'TiltUp'
-  s.version          = '3.1.2'
+  s.version          = '4.0.0'
   s.summary          = 'Official Clutter SDK in Swift to access core iOS features.'
 
   s.description      = <<-DESC
@@ -15,7 +15,7 @@ pre-built components and utilites that are useful across all of our apps.
 
   s.author           = { 'Clutter' => 'tech@clutter.com' }
   s.license          = 'MIT'
-  s.ios.deployment_target = '13.3'
+  s.ios.deployment_target = '14.0'
   s.swift_versions        = ['5.1']
 
   s.source       = { :git => "git@github.com:clutter/TiltUp.git", :tag => "#{s.version}" }
