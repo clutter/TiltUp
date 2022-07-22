@@ -16,7 +16,7 @@ public protocol StoryboardViewController: AnyObject {
 public extension StoryboardViewController {
     static func make() -> Self {
         let name = String(describing: self).replacingOccurrences(of: "Controller", with: "")
-        let storyboard = UIStoryboard(name: name, bundle: Bundle(for: self))
+        let storyboard = UIStoryboard(name: name, bundle: bundle)
 
         guard let controller = storyboard.instantiateInitialViewController() as? Self else {
             fatalError("StoryboardViewController: unable to instantiate '\(self)'")
