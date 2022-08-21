@@ -302,10 +302,13 @@ private extension CameraViewModel {
 
         photoSettings.isHighResolutionPhotoEnabled = true
 
-        let photoCaptureDelegate = PhotoCaptureDelegate(uniqueID: photoSettings.uniqueID,
-                                                        willCapturePhotoAnimation: viewObservers.willCapturePhotoAnimation,
-                                                        completionHandler: capturePhotoCompletion,
-                                                        logger: logger)
+        let photoCaptureDelegate = PhotoCaptureDelegate(
+            uniqueID: photoSettings.uniqueID,
+            orientation: currentVideoOrientation,
+            willCapturePhotoAnimation: viewObservers.willCapturePhotoAnimation,
+            completionHandler: capturePhotoCompletion,
+            logger: logger
+        )
 
         inProgressPhotoCaptureDelegates[photoSettings.uniqueID] = photoCaptureDelegate
         photoOutput.capturePhoto(with: photoSettings, delegate: photoCaptureDelegate)

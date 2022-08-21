@@ -32,7 +32,7 @@ class PhotoCaptureTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            capture.fileDataRepresentation,
+            capture.makeUIImage(scale: 1.0)?.heicData(compressionQuality: 1.0),
             image.heicData(compressionQuality: 1.0)
         )
         XCTAssertEqual(
