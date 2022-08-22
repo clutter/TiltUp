@@ -2,7 +2,7 @@ version: 2
 jobs:
   build-and-test-pods:
     macos:
-      xcode: 13.0.0
+      xcode: 13.4.1
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
@@ -26,7 +26,7 @@ jobs:
           destination: scan-logs
   build-and-test-spm:
     macos:
-      xcode: 12.1.0
+      xcode: 13.4.1
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
@@ -48,7 +48,7 @@ jobs:
 
   danger:
     macos:
-      xcode: 13.0.0
+      xcode: 13.4.1
     working_directory: /Users/distiller/project
     shell: /bin/bash --login -o pipefail
     steps:

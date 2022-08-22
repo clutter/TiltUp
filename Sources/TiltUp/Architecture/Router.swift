@@ -47,14 +47,16 @@ public extension Router {
     }
 
     // MARK: Replacing root
-    func replaceRoot(with viewController: UIViewController, popHandler: (() -> Void)? = nil) {
+    func replaceRoot(with viewController: UIViewController, animated: Bool = true, popHandler: (() -> Void)? = nil) {
         for handler in popHandlers.values {
             handler()
         }
         navigationController.popToRootViewController(animated: false)
         popHandlers = [:]
         popHandlers[viewController] = popHandler
-        guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else {
+        guard
+            animated,
+            let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else {
             navigationController.viewControllers = [viewController]
             return
         }
@@ -64,31 +66,31 @@ public extension Router {
     }
 
     // MARK: Removing all
-    func removeAll() {
+    func removeAll(animated: Bool = true) {
         for handler in popHandlers.values {
             handler()
         }
-        navigationController.popToRootViewController(animated: false)
+        navigationController.popToRootViewController(animated: animated)
         popHandlers = [:]
         navigationController.viewControllers = []
     }
 
     // MARK: Popping
-    func pop() {
+    func pop(animated: Bool = true) {
         // Don’t call pop handlers, because `popViewController` triggers `navigationController(_:didShow:)`
-        navigationController.popViewController(animated: true)
+        navigationController.popViewController(animated: animated)
     }
 
-    func popToRoot() {
-        if let poppedViewControllers = navigationController.popToRootViewController(animated: true) {
+    func popToRoot(animated: Bool = true) {
+        if let poppedViewControllers = navigationController.popToRootViewController(animated: animated) {
             // Call pop handlers, because `popToRootViewController` only triggers
             // `navigationController(_:didShow:)` for the top view controller
             poppedViewControllers.forEach(handlePop)
         }
     }
 
-    func popToViewController(_ viewController: UIViewController) {
-        if let poppedViewControllers = navigationController.popToViewController(viewController, animated: true) {
+    func popToViewController(_ viewController: UIViewController, animated: Bool = true) {
+        if let poppedViewControllers = navigationController.popToViewController(viewController, animated: animated) {
             // Call pop handlers, because `navigationController.popToViewController(_:)` only triggers
             // `navigationController(_:didShow:)` for the top view controller
             poppedViewControllers.forEach(handlePop)
