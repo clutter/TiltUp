@@ -88,8 +88,12 @@ final class CameraOverlayView: UIView {
                 controlPanelFinishButton.isHidden = true
                 flashButton.isHidden = true
 
-                let image = photoCapture.makeUIImage(scale: 0.7)
-                if let cgImage = image?.cgImage, let scale = image?.scale {
+                let image = photoCapture.makePreviewUIImage()
+                if
+                    image?.imageOrientation != .right,
+                    let cgImage = image?.cgImage,
+                    let scale = image?.scale
+                {
                     // Force the preview to display the photo as if it was taken as a portrait
                     // to prevent cropping in our imageview
                     // Camera is mounted at a 90 degree angle so portrait photos have the `.right` image orientation

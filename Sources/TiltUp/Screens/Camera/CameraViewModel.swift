@@ -287,14 +287,27 @@ private extension CameraViewModel {
             photoOutputConnection.videoOrientation = currentVideoOrientation
         }
 
-        let photoSettings: AVCapturePhotoSettings
-        if  photoOutput.availablePhotoCodecTypes.contains(.hevc) {
-            photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
-        } else {
-            photoSettings = AVCapturePhotoSettings()
+        var photoSettings = AVCapturePhotoSettings()
+        if  self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
+            photoSettings = AVCapturePhotoSettings(
+                format: [AVVideoCodecKey: AVVideoCodecType.hevc]
+            )
         }
 
         photoSettings.photoQualityPrioritization = .quality
+
+        let previewWidth = 512
+        let previewHeight = 512
+        // Specify a preview image.
+        if !photoSettings.__availablePreviewPhotoPixelFormatTypes.isEmpty,
+           let pixelFormat = photoSettings.__availablePreviewPhotoPixelFormatTypes.first
+        {
+            photoSettings.previewPhotoFormat = [
+                kCVPixelBufferPixelFormatTypeKey: pixelFormat,
+                kCVPixelBufferWidthKey: previewWidth,
+                kCVPixelBufferHeightKey: previewHeight
+            ] as [String: Any]
+        }
 
         if videoDeviceInput.device.isFlashAvailable {
             photoSettings.flashMode = flashMode

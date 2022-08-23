@@ -39,6 +39,10 @@ public struct PhotoCapture {
     public func makeUIImage(scale: CGFloat) -> UIImage? {
         photoCaptureConverter.makeUIImage(orientation: orientation, scale: scale)
     }
+
+    public func makePreviewUIImage() -> UIImage? {
+        photoCaptureConverter.makePreviewUIImage(orientation: orientation)
+    }
 }
 
 // MARK: - Stubbing Support
@@ -59,6 +63,7 @@ public extension PhotoCapture {
 
 protocol PhotoCaptureImageConverter {
     func makeUIImage(orientation: AVCaptureVideoOrientation, scale: CGFloat) -> UIImage?
+    func makePreviewUIImage(orientation: AVCaptureVideoOrientation) -> UIImage?
 }
 
 struct MockPhotoCaptureImageConverter: PhotoCaptureImageConverter {
@@ -67,11 +72,39 @@ struct MockPhotoCaptureImageConverter: PhotoCaptureImageConverter {
     func makeUIImage(orientation: AVCaptureVideoOrientation, scale: CGFloat) -> UIImage? {
         uiImage
     }
+
+    func makePreviewUIImage(orientation: AVCaptureVideoOrientation) -> UIImage? {
+        uiImage
+    }
 }
 
 extension AVCapturePhoto: PhotoCaptureImageConverter  {
     func makeUIImage(orientation: AVCaptureVideoOrientation, scale: CGFloat) -> UIImage? {
         guard let cgImage = self.cgImageRepresentation() else { return nil }
+
+        let imageOrientation: UIImage.Orientation
+        switch orientation {
+        case .portrait:
+            imageOrientation = .right
+        case .portraitUpsideDown:
+            imageOrientation = .left
+        case .landscapeRight:
+            imageOrientation = .up
+        case .landscapeLeft:
+            imageOrientation = .down
+        @unknown default:
+            imageOrientation = .right
+        }
+
+        return UIImage(
+            cgImage: cgImage,
+            scale: scale,
+            orientation: imageOrientation
+        )
+    }
+
+    func makePreviewUIImage(orientation: AVCaptureVideoOrientation) -> UIImage? {
+        guard let cgImage = self.previewCGImageRepresentation() else { return nil }
 
         let imageOrientation: UIImage.Orientation
         switch orientation {
