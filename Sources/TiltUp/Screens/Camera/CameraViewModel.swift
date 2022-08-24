@@ -287,14 +287,27 @@ private extension CameraViewModel {
             photoOutputConnection.videoOrientation = currentVideoOrientation
         }
 
-        let photoSettings: AVCapturePhotoSettings
-        if  photoOutput.availablePhotoCodecTypes.contains(.hevc) {
-            photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
-        } else {
-            photoSettings = AVCapturePhotoSettings()
+        var photoSettings = AVCapturePhotoSettings()
+        if  self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
+            photoSettings = AVCapturePhotoSettings(
+                format: [AVVideoCodecKey: AVVideoCodecType.hevc]
+            )
         }
 
         photoSettings.photoQualityPrioritization = .quality
+
+        let previewWidth = 512
+        let previewHeight = 512
+        // Specify a preview image.
+        if !photoSettings.__availablePreviewPhotoPixelFormatTypes.isEmpty,
+           let pixelFormat = photoSettings.__availablePreviewPhotoPixelFormatTypes.first
+        {
+            photoSettings.previewPhotoFormat = [
+                kCVPixelBufferPixelFormatTypeKey: pixelFormat,
+                kCVPixelBufferWidthKey: previewWidth,
+                kCVPixelBufferHeightKey: previewHeight
+            ] as [String: Any]
+        }
 
         if videoDeviceInput.device.isFlashAvailable {
             photoSettings.flashMode = flashMode
@@ -302,10 +315,13 @@ private extension CameraViewModel {
 
         photoSettings.isHighResolutionPhotoEnabled = true
 
-        let photoCaptureDelegate = PhotoCaptureDelegate(uniqueID: photoSettings.uniqueID,
-                                                        willCapturePhotoAnimation: viewObservers.willCapturePhotoAnimation,
-                                                        completionHandler: capturePhotoCompletion,
-                                                        logger: logger)
+        let photoCaptureDelegate = PhotoCaptureDelegate(
+            uniqueID: photoSettings.uniqueID,
+            orientation: currentVideoOrientation,
+            willCapturePhotoAnimation: viewObservers.willCapturePhotoAnimation,
+            completionHandler: capturePhotoCompletion,
+            logger: logger
+        )
 
         inProgressPhotoCaptureDelegates[photoSettings.uniqueID] = photoCaptureDelegate
         photoOutput.capturePhoto(with: photoSettings, delegate: photoCaptureDelegate)

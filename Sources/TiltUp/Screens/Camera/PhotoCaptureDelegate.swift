@@ -15,6 +15,7 @@ final class PhotoCaptureDelegate: NSObject {
     // MARK: Attributes
 
     let uniqueID: Int64
+    private let orientation: AVCaptureVideoOrientation
     private let willCapturePhotoAnimation: (() -> Void)?
     private let completionHandler: (PhotoCaptureDelegate) -> Void
 
@@ -22,12 +23,16 @@ final class PhotoCaptureDelegate: NSObject {
     private(set) var expectedDuration: CMTime?
     private var photoStartedAt: Date?
 
-    init(uniqueID: Int64,
-         willCapturePhotoAnimation: (() -> Void)?,
-         completionHandler: @escaping (PhotoCaptureDelegate) -> Void,
-         logger: Camera.Logger) {
+    init(
+        uniqueID: Int64,
+        orientation: AVCaptureVideoOrientation,
+        willCapturePhotoAnimation: (() -> Void)?,
+        completionHandler: @escaping (PhotoCaptureDelegate) -> Void,
+        logger: Camera.Logger
+    ) {
 
         self.uniqueID = uniqueID
+        self.orientation = orientation
         self.willCapturePhotoAnimation = willCapturePhotoAnimation
         self.completionHandler = completionHandler
         self.logger = logger
@@ -55,6 +60,7 @@ extension PhotoCaptureDelegate: AVCapturePhotoCaptureDelegate {
 
             photoCapture = PhotoCapture(
                 capture: photo,
+                orientation: orientation,
                 expectedCaptureDuration: .init(value: expectedCaptureDuration, unit: .seconds),
                 actualCaptureDuration: .init(value: actualCaptureDuration, unit: .seconds)
             )
