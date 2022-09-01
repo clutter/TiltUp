@@ -31,9 +31,15 @@ class PhotoCaptureTests: XCTestCase {
             )
         )
 
+        let cgImage = try assertUnwrap(image.cgImage)
+
         XCTAssertEqual(
-            capture.makeUIImage(scale: 1.0)?.heicData(compressionQuality: 1.0),
-            image.heicData(compressionQuality: 1.0)
+            capture.makeFileDataRepresentation(maxPixelSize: 1024),
+            MockPhotoCaptureImageConverter.fileDataRepresentation(
+                for: cgImage,
+                orientation: CGImagePropertyOrientation.right.rawValue,
+                maxPixelSize: 1024
+            )
         )
         XCTAssertEqual(
             capture.expectedCaptureDuration,
