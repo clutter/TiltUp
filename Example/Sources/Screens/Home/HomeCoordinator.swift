@@ -55,6 +55,14 @@ private extension HomeCoordinator {
                         Actual Duration: \(photoCapture.actualCaptureDuration.converted(to: .seconds))
                     """
                 )
+
+                if let photoData = photoCapture.makeFileDataRepresentation(maxPixelSize: 1920) {
+                    if let savedPhoto = SavedPhoto(data: photoData) {
+                        print("Saved: \(savedPhoto.relativePath)")
+                    } else {
+                        print("Error saving photo")
+                    }
+                }
             }
             self?.router.dismissModal()
         }
