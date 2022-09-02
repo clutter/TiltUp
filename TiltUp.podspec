@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'TiltUp'
-  s.version          = '5.0.1'
+  s.version          = '5.0.2'
   s.summary          = 'Official Clutter SDK in Swift to access core iOS features.'
 
   s.description      = <<-DESC
