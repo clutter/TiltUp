@@ -10,7 +10,7 @@ import AVFoundation
 
 public struct PhotoCapture {
     let photoCaptureConverter: PhotoCaptureImageConverter
-    let orientation: AVCaptureVideoOrientation
+    public let orientation: AVCaptureVideoOrientation
     public let expectedCaptureDuration: Measurement<UnitDuration>
     public let actualCaptureDuration: Measurement<UnitDuration>
 
