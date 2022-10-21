@@ -15,10 +15,8 @@ public struct PhotoCapture {
     public let actualCaptureDuration: Measurement<UnitDuration>
 
     static func mock() -> PhotoCapture? {
-        let image = UIImage.make(color: UIColor.cyan, size: CGSize(width: 640, height: 640))
-
         return PhotoCapture(
-            forStubbingWith: image,
+            forStubbingWith: nil,
             expectedCaptureDuration: .init(value: 0, unit: .seconds),
             actualCaptureDuration: .init(value: 0, unit: .seconds)
         )
@@ -51,11 +49,14 @@ public struct PhotoCapture {
 // MARK: - Stubbing Support
 
 public extension PhotoCapture {
+    static let stubImage = UIImage.make(color: UIColor.cyan, size: CGSize(width: 64, height: 64))
+
     init?(
-        forStubbingWith image: UIImage,
+        forStubbingWith image: UIImage?,
         expectedCaptureDuration: Measurement<UnitDuration>,
         actualCaptureDuration: Measurement<UnitDuration>
     ) {
+        let image = image ?? PhotoCapture.stubImage
         self.photoCaptureConverter = MockPhotoCaptureImageConverter(uiImage: image)
         self.orientation = .portrait
         self.expectedCaptureDuration = expectedCaptureDuration
@@ -97,15 +98,7 @@ struct MockPhotoCaptureImageConverter: PhotoCaptureImageConverter {
     let uiImage: UIImage?
 
     func makeFileDataRepresentation(orientation: AVCaptureVideoOrientation, maxPixelSize: Int) -> Data? {
-        uiImage?
-            .cgImage
-            .flatMap {
-                Self.fileDataRepresentation(
-                    for: $0,
-                    orientation: CGImagePropertyOrientation.right.rawValue,
-                    maxPixelSize: maxPixelSize
-                )
-            }
+        uiImage?.jpegData(compressionQuality: 1.0)
     }
 
     func makePreviewUIImage(orientation: AVCaptureVideoOrientation) -> UIImage? {
